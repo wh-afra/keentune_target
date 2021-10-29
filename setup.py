@@ -24,6 +24,7 @@ setup(
     package_data={'target': ['target.conf']},
     
     data_files = [
+        ("/etc/keentune/",["LICENSE"]),
         ("/etc/keentune/conf", ["target/target.conf"]),
     ],
 )
