@@ -30,7 +30,7 @@ class Config:
     keentune_conf_dir = os.path.join(keentune_home, 'conf')
     keentune_script_dir = os.path.join(keentune_home, 'script')
     backup_dir = os.path.join(keentune_workspace, "backup")
-
+    
     # log configuration
     logfile_path = conf['log']['logfile_path']
     console_level = LOGLEVEL[conf['log']['console_level']]

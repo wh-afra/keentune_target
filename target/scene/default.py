@@ -4,15 +4,18 @@ import json
 from target.common.config import Config
 from target.common.pylog import functionLog
 from target.domain import sysctl
+from target.domain import nginx
 
 
 class DefaultScene:
     Domain = {
-        "sysctl": sysctl.Sysctl()
+        "sysctl": sysctl.Sysctl(),
+        "nginx_conf": nginx.Nginx()
     }
 
     Domain_Priority = {
-        "sysctl": 1
+        "sysctl": 1,
+        "nginx_conf": 2
     }
 
     def __init__(self):
