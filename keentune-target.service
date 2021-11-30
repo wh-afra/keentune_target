@@ -1,0 +1,12 @@
+[Unit]
+Description=Tuning tool Daemon For Target
+After=systemd-sysctl.service network.target dbus.service keentuned.service
+Requires=dbus.service polkit.service
+Conflicts=cpupower.service
+
+[Service]
+ExecStart=/usr/bin/keentune-target
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
