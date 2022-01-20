@@ -6,5 +6,5 @@ if Config.scene == 'default':
     ACTIVE_SCENE = default.DefaultScene()
 
 else:
-    print("[ERROR] unknown scene in {}, scene available: 'default', 'container', 'compiler', 'mysql'".format(Config.conf_file_path))
+    print("[ERROR] unknown scene {} ".format(Config.scene))
     exit(1)
