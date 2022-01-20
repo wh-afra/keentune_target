@@ -16,11 +16,10 @@ class Nginx:
         """
         super().__init__()
         self.nginx_config_path = "/etc/nginx/nginx.conf"
-        self.backup_file = os.path.join(Config.backup_dir,"nginx_backup.conf")
+        self.backup_file = os.path.join(Config.backup_dir, "nginx_backup.conf")
 
         self.nginx_conf = NginxConfig()
         self._restart()
-
 
     @functionLog
     def _restart(self):
@@ -33,9 +32,8 @@ class Nginx:
         suc, res = sysCommand("systemctl restart nginx")
         if not suc:
             return False, "run restart nginx commond failed:{}".format(res)
-        
+
         return True, ""
-    
 
     @functionLog
     def _getParam(self, param_name):
@@ -57,10 +55,10 @@ class Nginx:
 
             else:
                 res = self.nginx_conf.get([('http',), param_name])
-            
+
             if res is None:
                 return True, ""
-            else: 
+            else:
                 param_value = res[1]
                 return True, param_value
 
@@ -69,7 +67,6 @@ class Nginx:
 
         except TypeError as e:
             return False, "No such parameter as {}".format(param_name)
-
 
     @functionLog
     def _appendParam(self, param, item):
@@ -92,9 +89,8 @@ class Nginx:
 
         except Exception as err:
             return False, "append parameter failed, error is:{}".format(err)
-        
-        return True, ""
 
+        return True, ""
 
     @functionLog
     def _setParam(self, param_name, param_value):
@@ -116,7 +112,8 @@ class Nginx:
                 if self.nginx_conf.get(param_name):
                     self.nginx_conf.set(param_name, param_value)
                 else:
-                    self.nginx_conf.append((param_name, param_value), position=4)
+                    self.nginx_conf.append(
+                        (param_name, param_value), position=4)
 
             elif param_name in ["worker_connections", "multi_accept"]:
                 if self.nginx_conf.get([("events",), param_name]):
@@ -136,7 +133,6 @@ class Nginx:
         else:
             return True, ""
 
-
     @functionLog
     def getParamAll(self, param_list: dict):
         """ Read value of parameters.
@@ -154,13 +150,12 @@ class Nginx:
         for param_name in param_list.keys():
             suc, param_value = self._getParam(param_name)
             result[param_name] = {
-                "value": "{}".format(param_value).replace("\t", " "), 
-                "dtype": "", 
-                "suc": True, 
+                "value": "{}".format(param_value).replace("\t", " "),
+                "dtype": "",
+                "suc": True,
                 "msg": ""
             }
         return True, result
-
 
     @functionLog
     def setParamAll(self, param_list: dict):
@@ -192,12 +187,11 @@ class Nginx:
             }
 
         self.nginx_conf.savef(self.nginx_config_path)
-        
+
         suc, msg = self._restart()
         if not suc:
             return False, "restart Nginx failed:{}".format(msg)
         return True, result
-
 
     @functionLog
     def rollback(self):
@@ -212,8 +206,9 @@ class Nginx:
         """
         if not os.path.exists(self.backup_file):
             return True, "backup file {} do not exists.".format(self.backup_file)
-    
-        suc, res = sysCommand("echo y | cp {} {}".format(self.backup_file, self.nginx_config_path))
+
+        suc, res = sysCommand("echo y | cp {} {}".format(
+            self.backup_file, self.nginx_config_path))
         if not suc:
             return False, "rollback nginx config failed:{}".format(res)
 
@@ -223,7 +218,6 @@ class Nginx:
 
         os.remove(self.backup_file)
         return True, "rollback nginx conf successfully!"
-
 
     @functionLog
     def backup(self, param_list: dict):
@@ -240,7 +234,8 @@ class Nginx:
             if not suc:
                 return False, res
 
-        suc, res = sysCommand("echo y | cp {} {}".format(self.nginx_config_path, self.backup_file))
+        suc, res = sysCommand("echo y | cp {} {}".format(
+            self.nginx_config_path, self.backup_file))
         if not suc:
             return False, "backup nginx conf failed:{}".format(res)
 

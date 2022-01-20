@@ -3,12 +3,17 @@ from setuptools import setup, find_packages
 long_description = ""
 
 setup(
-    name = "keentune-target",
-    version = "1.0.0",
+    name        = "keentune-target",
+    version     = "1.0.0",
     description = "KeenTune target unit",
+    url         = "https://gitee.com/anolis/keentune_target",
+    license     = "MulanPSLv2",
+    packages    = find_packages(),
+    package_data= {'target': ['target.conf']},
+
+    python_requires  = '>=3.6',
     long_description = long_description,
-    url = "https://gitee.com/anolis/keentune_target",
-    license = "MulanPSLv2",
+    
     classifiers = [
         "Environment:: KeenTune",
         "IntendedAudience :: Information Technology",
@@ -19,12 +24,12 @@ setup(
         "Programming Language :: Python :: 3.6",
         "ProgrammingLanguage :: Python"
     ],
-    python_requires='>=3.6',
-    packages = find_packages(),
-    package_data={'target': ['target.conf']},
-    
-    data_files = [
-        ("/etc/keentune/target",["LICENSE"]),
+    data_files  = [
+        ("/etc/keentune/target", ["LICENSE"]),
         ("/etc/keentune/conf", ["target/target.conf"]),
     ],
+
+    entry_points = {
+        'console_scripts': ['keentune-target=target.target:main']
+    }
 )

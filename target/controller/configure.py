@@ -3,10 +3,7 @@ import json
 from tornado.web import RequestHandler
 
 from target import scene
-from target.common.config import Config
-from target.common.pylog import functionLog, APILog
 from target.common.system import HTTPPost
-from target.common import pylog
 
 
 class ConfigureHandler(RequestHandler):
@@ -24,6 +21,7 @@ class ConfigureHandler(RequestHandler):
             resp_ip = request_data['resp_ip']
             resp_port = request_data['resp_port']
             param_domain_dict = request_data['data']
+            target_id = request_data['target_id']
 
         except KeyError as error_key:
             self.write(json.dumps({
@@ -44,10 +42,10 @@ class ConfigureHandler(RequestHandler):
             suc, res = scene.ACTIVE_SCENE.paramSet(param_domain_dict)
             if suc:
                 response_data = {
-                    "suc": True, "data": res, "msg": ""}
+                    "suc": True, "data": res, "target_id": target_id, "msg": ""}
             else:
                 response_data = {
-                    "suc": False, "data": {}, "msg": res}
+                    "suc": False, "data": {}, "target_id": target_id, "msg": res}
 
             suc, res = await HTTPPost(
                 api="apply_result",
