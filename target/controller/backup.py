@@ -3,7 +3,6 @@ import json
 from tornado.web import RequestHandler
 
 from target import scene
-
 from target.common.pylog import APILog
 
 

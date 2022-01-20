@@ -5,7 +5,6 @@ from target.controller.backup import BackupHandler
 from target.controller.rollback import RollbackHandler
 from target.controller.configure import ConfigureHandler
 
-from target.common import pylog
 from target.common.config import Config
 
 
@@ -21,10 +20,7 @@ KeenTune-target running in tunning target environment with four main functions:
 
 """
 
-
 def main():
-    pylog.init()
-
     app = tornado.web.Application(handlers=[
         (r"/backup", BackupHandler),
         (r"/status", StatusHandler),
