@@ -1,7 +1,6 @@
 import json
 
 from tornado.web import RequestHandler
-
 from target import scene
 from target.common.system import HTTPPost
 
@@ -18,28 +17,31 @@ class ConfigureHandler(RequestHandler):
         request_data = json.loads(self.request.body)
 
         try:
-            resp_ip = request_data['resp_ip']
-            resp_port = request_data['resp_port']
+            readonly    = request_data['readonly']
+            resp_ip     = request_data['resp_ip']
+            resp_port   = request_data['resp_port']
+            target_id   = request_data['target_id']
             param_domain_dict = request_data['data']
-            target_id = request_data['target_id']
 
         except KeyError as error_key:
             self.write(json.dumps({
-                "suc": False,
-                "msg": "can not find key: {}".format(error_key)
-
+                "suc" : False,
+                "msg" : "Interface call error: can not find key: {}".format(error_key)
             }))
             self.finish()
 
         else:
             self.write(json.dumps({
-                "suc": True,
-                "msg": ""
-
+                "suc" : True,
+                "msg" : ""
             }))
             self.finish()
 
-            suc, res = scene.ACTIVE_SCENE.paramSet(param_domain_dict)
+            if readonly:
+                suc, res = scene.ACTIVE_SCENE.paramGet(param_domain_dict)
+            else:
+                suc, res = scene.ACTIVE_SCENE.paramSet(param_domain_dict)
+            
             if suc:
                 response_data = {
                     "suc": True, "data": res, "target_id": target_id, "msg": ""}
