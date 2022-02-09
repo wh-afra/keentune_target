@@ -19,7 +19,9 @@ class Nginx:
         self.backup_file = os.path.join(Config.backup_dir, "nginx_backup.conf")
 
         self.nginx_conf = NginxConfig()
-        self._restart()
+        suc, msg = self._restart()
+        if not suc:
+            raise Exception(msg)
 
     @functionLog
     def _restart(self):

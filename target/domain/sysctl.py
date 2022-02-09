@@ -25,18 +25,19 @@ def _sysCommand(cmd: str):
 
 def _parseResult(out: str, err: str, param_list: list):
     result = {}
+    SUCCESS = True
     success_list = out.split('\n')
-    failed_lsit = err.split('\n')
+    failed_lsit  = err.split('\n')
 
     for param_name, param_info in param_list.items():
         for ele in success_list:
             match = re.match(r"({}) = (.+)".format(param_name), ele)
             if match is not None:
                 result[param_name] = {
-                    "value": match.group(2),
-                    "dtype": param_info["dtype"],
-                    "suc": True,
-                    "msg": ele
+                    "value" : match.group(2),
+                    "dtype" : param_info["dtype"],
+                    "suc"   : True,
+                    "msg"   : ele
                 }
                 break
 
@@ -47,22 +48,24 @@ def _parseResult(out: str, err: str, param_list: list):
             match = re.search(param_name, ele)
             if match is not None:
                 result[param_name] = {
-                    "value": param_info["value"],
-                    "dtype": param_info["dtype"],
-                    "suc": False,
-                    "msg": ele
+                    "value" : param_info["value"],
+                    "dtype" : param_info["dtype"],
+                    "suc"   : False,
+                    "msg"   : ele
                 }
+                SUCCESS = False
                 break
 
         if not result.__contains__(param_name):
             result[param_name] = {
-                "value": param_info["value"],
-                "dtype": param_info["dtype"],
-                "suc": False,
-                "msg": "can not find the param in output"
+                "value" : param_info["value"],
+                "dtype" : param_info["dtype"],
+                "suc"   : False,
+                "msg"   : "can not find the param in output"
             }
+            SUCCESS = False
 
-    return result
+    return SUCCESS, result
 
 
 class Sysctl:
@@ -116,8 +119,8 @@ class Sysctl:
         with open(install_file, 'w') as f:
             f.write(cmd)
 
-        suc, out, err = _sysCommand("bash {}".format(install_file))
-        result = _parseResult(out, err, param_list)
+        _, out, err = _sysCommand("bash {}".format(install_file))
+        suc, result = _parseResult(out, err, param_list)
         return suc, result
 
     @functionLog
