@@ -34,9 +34,12 @@ class Config:
     if not os.path.exists(backup_dir):
         os.makedirs(backup_dir)
 
-    log_dir = '/var/log'
 
-    logfile_path = os.path.join(log_dir, conf['log']['logfile_path'])
+    logfile_path = conf['log']['logfile_path']
+    log_dir = os.path.dirname(logfile_path)
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
     console_level = LOGLEVEL[conf['log']['console_level']]
     logfile_level = LOGLEVEL[conf['log']['logfile_level']]
     logfile_interval = int(conf['log']['logfile_interval'])
