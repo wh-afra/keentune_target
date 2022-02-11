@@ -1,41 +1,28 @@
 import json
 
 from tornado.web import RequestHandler
-
-from target import scene
 from target.common.pylog import APILog
+from target.controller import DomainObj
 
 
 class RollbackHandler(RequestHandler):
+    def _rollbackImpl(self):
+        """ Call rollback() function of each parameter domain in turn
+        """
+        domain_result = {}
+        SUCCESS = True
+        for domain in DomainObj.keys():
+            suc, out = DomainObj[domain].rollback()
+            SUCCESS = SUCCESS and suc
+            domain_result[domain] = out
+        return SUCCESS, domain_result
+
     @APILog
     def post(self):
-        """Handle rollback request
-
-        Request data format:
-            request_data = {
-                "type": tune type. e.g. 'vm'
-            } 
-
-        Resonse data format:
-            response_data = {
-                "suc": if operation success.
-                "msg": error message or empty string.
-            }
-        """
-        request_data = json.loads(self.request.body)
-
-        suc, res = scene.ACTIVE_SCENE.rollback()
-
-        if suc:
-            response_data = {
-                "suc": True,
-                "msg": "rollback successfully:{}".format(res)
-            }
-        else:
-            response_data = {
-                "suc": False,
-                "msg": res
-            }
-
-        self.write(json.dumps(response_data))
+        _ = json.loads(self.request.body)
+        suc, out = self._rollbackImpl()
+        self.write(json.dumps({
+            "suc": suc,
+            "msg": out
+        }))
         self.finish()

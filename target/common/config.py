@@ -23,7 +23,6 @@ class Config:
     keentune_conf_dir = os.path.join(keentune_home, 'conf')
     keentune_script_dir = os.path.join(keentune_home, 'script')
     target_port = conf['target']['target_port']
-    scene = conf['target']['scene']
 
     if not os.path.exists(keentune_script_dir):
         os.makedirs(keentune_script_dir)
