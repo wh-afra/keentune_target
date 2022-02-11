@@ -41,7 +41,7 @@ rm -rf $RPM_BUILD_ROOT
 SCRIPT_DIR=%{_sysconfdir}/keentune/script
 CONF_DIR=%{_sysconfdir}/keentune/conf
 rm -rf $SCRIPT_DIR
-if [ "$(ls -A $CONF_DIR)"="" ]; then
+if [ "$(ls -A $CONF_DIR)" = "" ]; then
         rm -rf $CONF_DIR
 fi
 
