@@ -2,7 +2,7 @@ import json
 
 from tornado.web import RequestHandler
 from target.common.system import HTTPPost
-from target.controller import DomainObj
+from target.controller import DOMAINOBJ
 
 
 class ConfigureHandler(RequestHandler):
@@ -14,22 +14,20 @@ class ConfigureHandler(RequestHandler):
         for domain in param_domain_dict.keys():
             param_list = param_domain_dict[domain]
             if readonly:
-                suc, out = DomainObj[domain].getParamAll(param_list)
+                suc, out = DOMAINOBJ[domain].getParamAll(param_list)
             else:
-                suc, out = DomainObj[domain].setParamAll(param_list)
+                suc, out = DOMAINOBJ[domain].setParamAll(param_list)
             SUCCESS = SUCCESS and suc
             domain_result[domain] = out
 
         return SUCCESS, domain_result
 
-
     def _validDomain(self,param_domain_dict):
         """ Check the legality of all domain defined in param_domain_dict
         """
         for domain in param_domain_dict.keys():
-            if not DomainObj.__contains__(domain):
-                raise Exception("Unsupported parameter domain '{}'".format(domain))
-
+            if not DOMAINOBJ.__contains__(domain):
+                raise Exception("parameter domain {} is not supported by current environment".format(domain))
 
     async def post(self):
         """ Getting and setting parameter values
@@ -61,7 +59,7 @@ class ConfigureHandler(RequestHandler):
             return
 
         else:
-            self.write(json.dumps({"suc" : True, "msg" : ""}))
+            self.write(json.dumps({"suc" : True, "msg" : "parameter set/get is running"}))
             self.finish()
 
         suc, out = self._configureImpl(param_domain_dict, readonly)
