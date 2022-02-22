@@ -2,7 +2,7 @@ import json
 
 from tornado.web import RequestHandler
 from target.common.pylog import APILog
-from target.controller import DomainObj
+from target.controller import DOMAINOBJ
 
 
 class BackupHandler(RequestHandler):
@@ -13,7 +13,7 @@ class BackupHandler(RequestHandler):
         SUCCESS = True
         for domain in param_domain_dict.keys():
             param_list = param_domain_dict[domain]
-            suc, out = DomainObj[domain].backup(param_list)
+            suc, out = DOMAINOBJ[domain].backup(param_list)
 
             SUCCESS = SUCCESS and suc
             domain_result[domain] = out
@@ -23,8 +23,8 @@ class BackupHandler(RequestHandler):
         """ Check the legality of all domain defined in param_domain_dict
         """
         for domain in param_domain_dict.keys():
-            if not DomainObj.__contains__(domain):
-                raise Exception("Unsupported parameter domain '{}'".format(domain))
+            if not DOMAINOBJ.__contains__(domain):
+                raise Exception("parameter domain {} is not supported by current environment".format(domain))
 
     @APILog
     def post(self):

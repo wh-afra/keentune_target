@@ -2,7 +2,7 @@ import json
 
 from tornado.web import RequestHandler
 from target.common.pylog import APILog
-from target.controller import DomainObj
+from target.controller import DOMAINOBJ
 
 
 class RollbackHandler(RequestHandler):
@@ -11,8 +11,8 @@ class RollbackHandler(RequestHandler):
         """
         domain_result = {}
         SUCCESS = True
-        for domain in DomainObj.keys():
-            suc, out = DomainObj[domain].rollback()
+        for domain in DOMAINOBJ.keys():
+            suc, out = DOMAINOBJ[domain].rollback()
             SUCCESS = SUCCESS and suc
             domain_result[domain] = out
         return SUCCESS, domain_result
@@ -21,8 +21,5 @@ class RollbackHandler(RequestHandler):
     def post(self):
         _ = json.loads(self.request.body)
         suc, out = self._rollbackImpl()
-        self.write(json.dumps({
-            "suc": suc,
-            "msg": out
-        }))
+        self.write(json.dumps({"suc": suc,"msg": out}))
         self.finish()
