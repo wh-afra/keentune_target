@@ -4,6 +4,7 @@ from target.controller.status import StatusHandler
 from target.controller.backup import BackupHandler
 from target.controller.rollback import RollbackHandler
 from target.controller.configure import ConfigureHandler
+from target.controller.detect import DetectHandler
 
 from target.common.config import Config
 
@@ -26,6 +27,7 @@ def main():
         (r"/status", StatusHandler),
         (r"/rollback", RollbackHandler),
         (r"/configure", ConfigureHandler),
+        (r"/detect", DetectHandler),
     ])
 
     app.listen(Config.target_port)
