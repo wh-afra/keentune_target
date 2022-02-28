@@ -1,14 +1,3 @@
-import tornado
-
-from target.controller.status import StatusHandler
-from target.controller.backup import BackupHandler
-from target.controller.rollback import RollbackHandler
-from target.controller.configure import ConfigureHandler
-from target.controller.detect import DetectHandler
-
-from target.common.config import Config
-
-
 """ 
 KeenTune target main function.  
 
@@ -20,6 +9,16 @@ KeenTune-target running in tunning target environment with four main functions:
     4. rollback: Rollback to parameter configuration defined in backup file.
 
 """
+
+import tornado
+
+from target.common.config import Config
+from target.controller.status import StatusHandler
+from target.controller.backup import BackupHandler
+from target.controller.rollback import RollbackHandler
+from target.controller.configure import ConfigureHandler
+from target.controller.detect import DetectHandler
+
 
 def main():
     app = tornado.web.Application(handlers=[

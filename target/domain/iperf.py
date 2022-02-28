@@ -18,7 +18,7 @@ class Iperf:
         return True, "unnecessary"
 
     @functionLog
-    def setParamAll(self, param_list: dict):
+    def setParamAll(self, param_list):
         command = "-t 15 -M 1500"
         result = {}
         for param_name, param_info in param_list.items():
@@ -41,7 +41,7 @@ class Iperf:
         return True, result
 
     @functionLog
-    def getParamAll(self, param_list: dict):
+    def getParamAll(self, param_list):
         param_dict = {
             "Parallel": 1,
             "window_size": 10240,
@@ -63,5 +63,5 @@ class Iperf:
         return True, "iperf don't need rollback!"
 
     @functionLog
-    def backup(self, param_list: dict):
+    def backup(self, param_list):
         return True, "iperf don't need backup!"
