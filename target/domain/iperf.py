@@ -6,9 +6,6 @@ from target.common.pylog import functionLog
 
 
 class Iperf:
-    def __init__(self):
-        super().__init__()
-    
     @functionLog
     def _beforeParamSet(self):
         return True, "unnecessary"
@@ -63,5 +60,5 @@ class Iperf:
         return True, "iperf don't need rollback!"
 
     @functionLog
-    def backup(self, param_list):
+    def backup(self):
         return True, "iperf don't need backup!"
