@@ -1,14 +1,61 @@
 import json
+import traceback
 
 from tornado.web import RequestHandler
-from target.common.system import HTTPPost
 from target.controller import DOMAINOBJ
+from target.common import pylog
 
-
+from tornado.httpclient import HTTPClient, HTTPRequest, HTTPError
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor
+from tornado.gen import coroutine
+ 
 class ConfigureHandler(RequestHandler):
+    executor = ThreadPoolExecutor(20)
+
+    @run_on_executor
+    def _response(self,
+                  response_data:dict,
+                  response_ip  :str,
+                  response_port:str):
+        http_client = HTTPClient()
+        try:
+            URL = "http://{ip}:{port}/apply_result".format(
+                            ip = response_ip, port = response_port)
+            pylog.logger.info("response to {}".format(URL))
+
+            response = http_client.fetch(HTTPRequest(
+                url    =  URL,
+                method = "POST",
+                body   = json.dumps(response_data)
+            ))
+        except RuntimeError as e:
+            pylog.logger.error("Failed to response to {}: {}".format(URL, e))
+            return False, "{},{}".format(e, traceback.format_exc())
+
+        except HTTPError as e:
+            pylog.logger.error("Failed to response to {}: {}".format(URL, e))
+            return False, "{},{}".format(e, traceback.format_exc())
+
+        except Exception as e:
+            pylog.logger.error("Failed to response to {}: {}".format(URL, e))
+            return False, "{},{}".format(e, traceback.format_exc())
+
+        else:
+            if response.code == 200:
+                return True, ""
+            else:
+                return False, response.reason
+
+        finally:
+            http_client.close()
+
+
+    @run_on_executor
     def _configureImpl(self, param_domain_dict:dict, readonly:bool):
         """ Call getParamAll() function or setParamAll() function of each parameter domain in turn
         """
+        global DOMAINOBJ
         domain_result = {}
         SUCCESS = True
         for domain in param_domain_dict.keys():
@@ -19,58 +66,55 @@ class ConfigureHandler(RequestHandler):
                 suc, out = DOMAINOBJ[domain].setParamAll(param_list)
             SUCCESS = SUCCESS and suc
             domain_result[domain] = out
-
         return SUCCESS, domain_result
 
-    def _validDomain(self,param_domain_dict):
-        """ Check the legality of all domain defined in param_domain_dict
-        """
-        for domain in param_domain_dict.keys():
-            if not DOMAINOBJ.__contains__(domain):
-                raise Exception("parameter domain {} is not supported by current environment".format(domain))
 
-    async def post(self):
-        """ Getting and setting parameter values
+    @coroutine
+    def post(self):
+        global DOMAINOBJ
+        def _validDomain(param_domain_dict):
+            """ Check the legality of all domain defined in param_domain_dict
+            """
+            for domain in param_domain_dict.keys():
+                if not DOMAINOBJ.__contains__(domain):
+                    raise Exception("parameter domain {} is not supported by current environment".format(domain))
 
-        Setting parameter value if parameter value is not None.
-        Getting all parameter value defined in resquest data.
+        def _validField(request_data):
+            assert request_data.__contains__('readonly')
+            assert request_data.__contains__('resp_ip')
+            assert request_data.__contains__('resp_port')
+            assert request_data.__contains__('target_id')
+            assert request_data.__contains__('data')
 
-        """
         request_data = json.loads(self.request.body)
-        try:
-            readonly    = request_data['readonly']
-            resp_ip     = request_data['resp_ip']
-            resp_port   = request_data['resp_port']
-            target_id   = request_data['target_id']
-            param_domain_dict = request_data['data']
-            self._validDomain(param_domain_dict)
+        pylog.logger.info("get configure request: {}".format(request_data))
 
-        except KeyError as error_key:
-            self.write(json.dumps({
-                "suc" : False,
-                "msg" : "Interface call error: can not find key: {}".format(error_key)
-            }))
-            self.finish()
-            return
+        try:
+            _validField(request_data)
+            _validDomain(request_data['data'])
 
         except Exception as e:
+            pylog.logger.error("Failed to response request: {}".format(e))
             self.write(json.dumps({"suc" : False, "msg": str(e)}))
             self.finish()
-            return
-
+            
         else:
             self.write(json.dumps({"suc" : True, "msg" : "parameter set/get is running"}))
             self.finish()
 
-        suc, out = self._configureImpl(param_domain_dict, readonly)
-        if suc:
-            response = {"suc": True, "data": out, "target_id": target_id, "msg": ""}
-        else:
-            response = {"suc": False, "data": {}, "target_id": target_id, "msg": out}
-
-        await HTTPPost(
-            api  = "apply_result",
-            ip   = resp_ip,
-            port = resp_port,
-            data = response
-        )
+            suc, out = yield self._configureImpl(request_data['data'], request_data['readonly'])
+            if suc:
+                response_data = {
+                    "suc"       : True, 
+                    "data"      : out, 
+                    "target_id" : request_data['target_id'], 
+                    "msg"       : ""
+                }
+            else:     
+                response_data = {
+                    "suc"       : False, 
+                    "data"      : {}, 
+                    "target_id" : request_data['target_id'], 
+                    "msg"       : out
+                }   
+            _, _ = yield self._response(response_data, request_data['resp_ip'], request_data['resp_port'])
