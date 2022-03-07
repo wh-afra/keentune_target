@@ -2,14 +2,14 @@ import json
 import traceback
 
 from tornado.web import RequestHandler
-from target.controller import DOMAINOBJ
+from target.domain import DOMAINOBJ, loadDoamin
 from target.common import pylog
 
 from tornado.httpclient import HTTPClient, HTTPRequest, HTTPError
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 from tornado.gen import coroutine
- 
+
 class ConfigureHandler(RequestHandler):
     executor = ThreadPoolExecutor(20)
 
@@ -75,9 +75,9 @@ class ConfigureHandler(RequestHandler):
         def _validDomain(param_domain_dict):
             """ Check the legality of all domain defined in param_domain_dict
             """
+
             for domain in param_domain_dict.keys():
-                if not DOMAINOBJ.__contains__(domain):
-                    raise Exception("parameter domain {} is not supported by current environment".format(domain))
+                loadDoamin(domain)
 
         def _validField(request_data):
             assert request_data.__contains__('readonly')

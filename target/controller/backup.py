@@ -1,7 +1,7 @@
 import json
 
 from tornado.web import RequestHandler
-from target.controller import DOMAINOBJ
+from target.domain import DOMAINOBJ, loadDoamin
 
 
 class BackupHandler(RequestHandler):
@@ -28,8 +28,7 @@ class BackupHandler(RequestHandler):
             """ Check the legality of all domain defined in param_domain_dict
             """
             for domain in param_domain_dict.keys():
-                if not DOMAINOBJ.__contains__(domain):
-                    raise Exception("parameter domain {} is not supported by current environment".format(domain))
+                loadDoamin(domain)
 
         param_domain_dict = json.loads(self.request.body)
         try:
