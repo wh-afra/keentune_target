@@ -7,7 +7,9 @@ DOMAINOBJ = {}
 
 def loadDoamin(domain_name):
     global DOMAINOBJ
-
+    if DOMAINOBJ.__contains__(domain_name):
+        return 
+    
     try:
         module = import_module('target.domain.{}'.format(domain_name))
         domain_obj = eval('domain.{domain_name}.{class_name}()'.format(

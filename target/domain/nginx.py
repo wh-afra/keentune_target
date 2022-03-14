@@ -32,7 +32,6 @@ class Nginx:
             str : fail message.
         """
         suc, res = sysCommand("systemctl restart nginx")
-        time.sleep(3)
         if not suc:
             return False, "run restart nginx commond failed:{}".format(res)
 
