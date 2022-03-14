@@ -1,4 +1,5 @@
 import os
+import time
 
 from pynginxconfig import NginxConfig
 
@@ -14,7 +15,6 @@ class Nginx:
         1. init NginxConfig obj.
         2. start nginx service.
         """
-        super().__init__()
         self.nginx_config_path = "/etc/nginx/nginx.conf"
         self.backup_file = os.path.join(Config.backup_dir, "nginx_backup.conf")
 
@@ -32,6 +32,7 @@ class Nginx:
             str : fail message.
         """
         suc, res = sysCommand("systemctl restart nginx")
+        time.sleep(3)
         if not suc:
             return False, "run restart nginx commond failed:{}".format(res)
 
@@ -136,7 +137,7 @@ class Nginx:
             return True, ""
 
     @functionLog
-    def getParamAll(self, param_list: dict):
+    def getParamAll(self, param_list):
         """ Read value of parameters.
 
         Args:
@@ -160,7 +161,7 @@ class Nginx:
         return True, result
 
     @functionLog
-    def setParamAll(self, param_list: dict):
+    def setParamAll(self, param_list):
         """ Set value of parameters.
 
         if success to set parameters, restart nginx service.
@@ -177,6 +178,7 @@ class Nginx:
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for"'"""
         self.nginx_conf.set([("http",), "log_format"], log_value)
+        self.nginx_conf.set([("http",), "access_log"], "off")
 
         result = {}
         for param_name, param_info in param_list.items():
@@ -222,7 +224,7 @@ class Nginx:
         return True, "rollback nginx conf successfully!"
 
     @functionLog
-    def backup(self, param_list: dict):
+    def backup(self, _):
         """ Backup parameter values in nginx.conf to backup files.
 
         Copy parameter values from nginx.conf to backup file as .conf
