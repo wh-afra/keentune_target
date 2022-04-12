@@ -73,7 +73,7 @@ class Sysctl:
     get_cmd = "sysctl -n {name}"
     set_cmd = "sysctl -w {name}='{value}'"
     backup_file = os.path.join(
-        Config.backup_dir, "{}_backup.sh".format(name))
+        Config.backup_dir, "{}_backup.conf".format(name))
 
     def __init__(self):
         super().__init__()
@@ -206,7 +206,7 @@ class Sysctl:
                 Errormsg += param_value + "\n"
                 continue
 
-            backup_content += self.set_cmd.format(
+            backup_content += "{name}={value}".format(
                 name=param_name.strip(),
                 value=param_value) + "\n"
 
@@ -229,12 +229,11 @@ class Sysctl:
         if not os.path.exists(self.backup_file):
             return True, "Can not find backup file:{}".format(self.backup_file)
 
-        suc, res = sysCommand("bash {}".format(self.backup_file))
+        suc, res = sysCommand("cat {} |while read line; do sysctl -w $line; done".format(self.backup_file))
         if suc:
             backup_time = time.asctime(time.localtime(
                 os.path.getctime(self.backup_file)))
             os.remove(self.backup_file)
             return True, backup_time
-
         else:
             return False, res
