@@ -19,7 +19,7 @@ class Fio:
 
     @functionLog
     def setParamAll(self, param_list):
-        command = "fio -ioengine=psync -time_based=1 -rw=read"
+        command = "-time_based=1 -rw=read -direct=1 -buffered=0 -thread -iodepth=1 -runtime=30 -lockmem=1G -group_reporting -name=read"
         result = {}
         for param_name, param_info in param_list.items():
             command += " -{} {}".format(param_name[0], param_info["value"])
@@ -44,7 +44,7 @@ class Fio:
     @functionLog
     def getParamAll(self, param_list):
         param_dict = {
-            "size": 110,
+            "size": "110g",
             "bs": "512B",
             "numjobs": 1
         }
