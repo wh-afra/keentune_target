@@ -5,7 +5,7 @@ from target.common.config import Config
 from target.common.pylog import functionLog
 
 
-class Iperf:
+class Fio:
     def __init__(self):
         pass
 
@@ -34,6 +34,7 @@ class Iperf:
         with open(path, "r", encoding='UTF-8') as f:
             data = f.read()
             data = re.sub(r"SIZE = \d+", "SIZE = {}".format(param_list["size"]["value"]), data)
+            data = re.sub(r"NumJobs = \d+", "NumJobs = {}".format(param_list["numjobs"]["value"]), data)
             data = re.sub(r'COMMAND = "[a-zA-Z\d\-\s]+"', 'COMMAND = "{}"'.format(command), data)
         with open(path, "w", encoding='UTF-8') as f:
             f.write(data)
@@ -44,7 +45,7 @@ class Iperf:
     def getParamAll(self, param_list):
         param_dict = {
             "size": 110,
-            "bs": 512,
+            "bs": "512B",
             "numjobs": 1
         }
         result = {}
