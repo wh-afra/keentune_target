@@ -18,6 +18,7 @@ from target.controller.backup import BackupHandler
 from target.controller.rollback import RollbackHandler
 from target.controller.configure import ConfigureHandler
 from target.controller.detect import DetectHandler
+from target.controller.initialize import InitializeHandler, backupall
 
 
 def main():
@@ -30,6 +31,7 @@ def main():
     ])
 
     app.listen(Config.target_port)
+    backupall()
     print("KeenTune-target running...")
     tornado.ioloop.IOLoop.current().start()
 

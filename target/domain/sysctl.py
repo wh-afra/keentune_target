@@ -237,3 +237,16 @@ class Sysctl:
             return True, backup_time
         else:
             return False, res
+
+@functionLog
+def initialize():
+    initialize_dir="/var/keentune/ServiceBackup"
+    backup_file=os.path.join(initialize_dir, "sysctl.cnf")
+    if os.path.exists(backup_file):
+        return True, "backup file:{} exists, no need to backup again".format(backup_file)
+    backup_cmd="sysctl -a > {}".format(backup_file)
+    suc, out, err = _sysCommand(backup_cmd)
+    if not suc:
+        return False, "Backup parameters failed, reason:{}".format(err)
+    return True, "Backup kernel parameters succeeded. Procedure"
+

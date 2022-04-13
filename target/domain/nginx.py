@@ -1,6 +1,6 @@
 import os
 import time
-
+import subprocess
 from pynginxconfig import NginxConfig
 
 from target.common.config import Config
@@ -243,3 +243,46 @@ class Nginx:
             return False, "backup nginx conf failed:{}".format(res)
 
         return True, "backup nginx successfully!"
+
+def _sysCommand(cmd:str):
+    result = subprocess.run(
+        cmd,
+        shell=True,
+        close_fds=True,
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE
+    )
+
+    suc = result.returncode
+    out = result.stdout.decode('UTF-8', 'strict').strip()
+    err = result.stderr.decode('UTF-8', 'strict').strip()
+    return suc, out, err
+
+def initialize():
+    initialize_dir = "/var/keentune/ServiceBackup"
+    config_file = "/etc/nginx/nginx.conf"
+    backup_file = os.path.join(initialize_dir, "nginx.conf")
+
+    suc, out, err = _sysCommand("systemctl status nginx")
+    if suc == 4:
+        return True, "No nginx service is found. No configuration backup is required"
+
+    if os.path.exists(backup_file):
+        if os.path.getsize(backup_file)!=0:
+            return True, "backup file:{} exists, no need to backup again".format(backup_file)
+        else:
+            return True, "The application does not require a configuration file"
+
+    if not os.path.exists(config_file):
+        with open(backup_file, "w") as f:
+            return True, "The application does not require a configuration file"
+
+    try:
+        with open(config_file, "r", encoding="UTF-8") as f:
+            backup_content = f.read()
+        with open(backup_file, "w") as f:
+            f.write(backup_content)
+    except Exception as e:
+        return False, "Backup config failed, reason:{}".format(str(e))
+    return True, "Backup the nginx configuration file succeeded. Procedure"
+
