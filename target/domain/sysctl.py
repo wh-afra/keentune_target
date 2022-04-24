@@ -239,14 +239,25 @@ class Sysctl:
             return False, res
 
 @functionLog
-def initialize():
+def initialize(action):
     initialize_dir="/var/keentune/ServiceBackup"
     backup_file=os.path.join(initialize_dir, "sysctl.cnf")
-    if os.path.exists(backup_file):
-        return True, "backup file:{} exists, no need to backup again".format(backup_file)
-    backup_cmd="sysctl -a > {}".format(backup_file)
-    suc, out, err = _sysCommand(backup_cmd)
-    if not suc:
-        return False, "Backup parameters failed, reason:{}".format(err)
-    return True, "Backup kernel parameters succeeded. Procedure"
+    if action == "backup":
+        if os.path.exists(backup_file):
+            return True, "backup file:{} exists, no need to backup again".format(backup_file)
+        backup_cmd="sysctl -a > {}".format(backup_file)
+        suc, out, err = _sysCommand(backup_cmd)
+        if not suc:
+            return False, "Backup parameters failed, reason:{}".format(err)
+        return True, "Backup kernel parameters succeeded. Procedure"
 
+    elif action == "rollback":
+        if not os.path.exists(backup_file):
+            return True, "No backup file was found"
+
+        backup_cmd="sysctl -p {}".format(backup_file)
+        suc, out, err = _sysCommand(backup_cmd)
+        if not suc:
+            return False, "Failed to rollback kernel parameters. Procedure, reason:{}".format(err)
+        os.remove(backup_file)
+        return True, "The rollback of kernel parameters succeeded. Procedure"

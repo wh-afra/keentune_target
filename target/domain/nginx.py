@@ -258,31 +258,52 @@ def _sysCommand(cmd:str):
     err = result.stderr.decode('UTF-8', 'strict').strip()
     return suc, out, err
 
-def initialize():
-    initialize_dir = "/var/keentune/ServiceBackup"
+@functionLog
+def initialize(action):
     config_file = "/etc/nginx/nginx.conf"
+    initialize_dir = "/var/keentune/ServiceBackup"
     backup_file = os.path.join(initialize_dir, "nginx.conf")
+    if action == "backup":
+        suc, out, err = _sysCommand("systemctl status nginx")
+        if suc == 4:
+            return True, "No nginx service is found. No configuration backup is required"
 
-    suc, out, err = _sysCommand("systemctl status nginx")
-    if suc == 4:
-        return True, "No nginx service is found. No configuration backup is required"
+        if os.path.exists(backup_file):
+            if os.path.getsize(backup_file)!=0:
+                return True, "backup file:{} exists, no need to backup again".format(backup_file)
+            else:
+                return True, "The application does not require a configuration file"
 
-    if os.path.exists(backup_file):
-        if os.path.getsize(backup_file)!=0:
-            return True, "backup file:{} exists, no need to backup again".format(backup_file)
+        if not os.path.exists(config_file):
+            with open(backup_file, "w") as f:
+                return True, "The application does not require a configuration file"
+
+        try:
+            with open(config_file, "r", encoding="UTF-8") as f:
+                backup_content = f.read()
+            with open(backup_file, "w") as f:
+                f.write(backup_content)
+        except Exception as e:
+            return False, "Backup config failed, reason:{}".format(str(e))
+        return True, "Backup the nginx configuration file succeeded. Procedure"
+
+    elif action == "rollback":
+        if not os.path.exists(backup_file):
+            return True, "No backup file was found"
+        if os.path.getsize(backup_file)==0:
+            os.remove(config_file)
         else:
-            return True, "The application does not require a configuration file"
+            try:
+                with open(backup_file, "r", encoding="UTF-8") as f:
+                    backup_content = f.read()
+                with open(config_file, "w") as f:
+                    f.write(backup_content)
+            except Exception as e:
+                return False, "Rollback nginx config failed, reason:{}".format(str(e))
 
-    if not os.path.exists(config_file):
-        with open(backup_file, "w") as f:
-            return True, "The application does not require a configuration file"
-
-    try:
-        with open(config_file, "r", encoding="UTF-8") as f:
-            backup_content = f.read()
-        with open(backup_file, "w") as f:
-            f.write(backup_content)
-    except Exception as e:
-        return False, "Backup config failed, reason:{}".format(str(e))
-    return True, "Backup the nginx configuration file succeeded. Procedure"
+        suc, out, err = _sysCommand("systemctl restart nginx")
+        if suc != 0:
+            return False, err
+        os.remove(backup_file)
+        return True, "The rollback of nginx succeeded. Procedure"
 
