@@ -48,7 +48,7 @@ fi
 %files -f INSTALLED_FILES
 %defattr(-,root,root)
 %license LICENSE
-%{_libdir}/systemd/system/keentune-target.service
+%{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
 * Wed Jan 26 2022 lilinjie <lilinjie@uniontech.com> - 1.0.0-6
