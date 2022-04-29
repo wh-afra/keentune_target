@@ -229,7 +229,7 @@ class Sysctl:
         if not os.path.exists(self.backup_file):
             return True, "Can not find backup file:{}".format(self.backup_file)
 
-        suc, res = sysCommand("cat {} |while read line; do sysctl -w $line; done".format(self.backup_file))
+        suc, res = sysCommand("IFS='';cat {} |while read line; do sysctl -w $line; done".format(self.backup_file))
         if suc:
             backup_time = time.asctime(time.localtime(
                 os.path.getctime(self.backup_file)))
