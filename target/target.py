@@ -28,6 +28,7 @@ def main():
         (r"/rollback", RollbackHandler),
         (r"/configure", ConfigureHandler),
         (r"/detect", DetectHandler),
+        (r"/initialize", InitializeHandler),
     ])
 
     app.listen(Config.target_port)
