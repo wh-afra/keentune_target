@@ -1,11 +1,11 @@
-%define anolis_release 6
+%define anolis_release 0
 
 #
 # spec file for package KeenTune-target
 #
 
 Name:           keentune-target
-Version:        1.0.0
+Version:        1.1.0
 Release:        %{?anolis_release}%{?dist}
 Url:            https://gitee.com/anolis/keentune_target
 Summary:        Parameters setting, reading and backup models for KeenTune
@@ -51,23 +51,24 @@ fi
 %{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
-* Wed Jan 26 2022 lilinjie <lilinjie@uniontech.com> - 1.0.0-6
-- remove empty conf/script dir when uninstall keentune-target
+* Wed Mar 03 2022 Runzhe Wang <15501019889@126.com> - 1.1.0
+- Add support for GP (in iTuned) in sensitizing algorithms
+- Add support for lasso in sensitizing algorithms
+- refactor tornado module: replace await by threadpool
+- lazy load domain in keentune-target
 
-* Wed Dec 12 2021 Runzhe Wang <15501019889@126.com> - 1.0.0-5
-- fix bug: can not running in alinux2 and centos7
+* Wed Jan 01 2022 Runzhe Wang <15501019889@126.com> - 1.0.1
+- Verify input arguments of command 'param tune'
+- Supporting of multiple target tuning
+- Fix bug which cause keentune hanging after command 'param stop'
+- Add verification of conflicting commands such as 'param dump', 'param delete' when a tuning job is runing.
+- Remove version limitation of tornado
+- Refactor sysctl domain to improve stability of parameter setting
+- Fix some user experience issues
+
+* Wed Dec 12 2021 Runzhe Wang <15501019889@126.com> - 1.0.0
 - change modify codeup address to gitee
-
-* Wed Dec 01 2021 Runzhe Wang <15501019889@126.com> - 1.0.0-4
 - add keentune to systemd
-
-* Wed Nov 24 2021 Runzhe Wang <15501019889@126.com> - 1.0.0-3
 - fix: wrong license in setup.py
 - add nginx conf parameter domain
-
-* Wed Nov 10 2021 Runzhe Wang <15501019889@126.com> - 1.0.0-2
-- use '%license' macro
 - update license to MulanPSLv2
-
-* Wed Aug 18 2021 Runzhe Wang <15501019889@126.com> - 1.0.0-1
-- Initial KeenTune-target
