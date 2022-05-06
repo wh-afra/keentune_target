@@ -2,6 +2,7 @@ import json
 
 from tornado.web import RequestHandler
 
+
 class StatusHandler(RequestHandler):
     def get(self):
         back_json = {"status": "alive"}

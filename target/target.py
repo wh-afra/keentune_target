@@ -1,5 +1,14 @@
-""" 
-KeenTune target main function.  
+import tornado
+
+from target.common.config import Config
+from target.controller.backup import BackupHandler
+from target.controller.configure import ConfigureHandler
+from target.controller.detect import DetectHandler
+from target.controller.rollback import RollbackHandler
+from target.controller.status import StatusHandler
+
+"""
+KeenTune target main function.
 
 KeenTune-target running in tunning target environment with four main functions:
 
@@ -10,17 +19,9 @@ KeenTune-target running in tunning target environment with four main functions:
 
 """
 
-import tornado
-
-from target.common.config import Config
-from target.controller.status import StatusHandler
-from target.controller.backup import BackupHandler
-from target.controller.rollback import RollbackHandler
-from target.controller.configure import ConfigureHandler
-from target.controller.detect import DetectHandler
-
-
 def main():
+    """ Keentune-Target main function
+    """
     app = tornado.web.Application(handlers=[
         (r"/backup", BackupHandler),
         (r"/status", StatusHandler),

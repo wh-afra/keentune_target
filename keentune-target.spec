@@ -5,7 +5,7 @@
 #
 
 Name:           keentune-target
-Version:        1.1.0
+Version:        1.1.1
 Release:        %{?anolis_release}%{?dist}
 Url:            https://gitee.com/anolis/keentune_target
 Summary:        Parameters setting, reading and backup models for KeenTune
@@ -51,6 +51,9 @@ fi
 %{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
+* Fri May 06 2022 Runzhe Wang <15501019889@126.com> - 1.1.1
+- Modify code format and style
+
 * Wed Mar 03 2022 Runzhe Wang <15501019889@126.com> - 1.1.0
 - Add support for GP (in iTuned) in sensitizing algorithms
 - Add support for lasso in sensitizing algorithms

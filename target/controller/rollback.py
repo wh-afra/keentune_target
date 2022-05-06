@@ -1,6 +1,7 @@
 import json
 
 from tornado.web import RequestHandler
+
 from target.domain import DOMAINOBJ
 
 

@@ -3,11 +3,13 @@ import os
 from pynginxconfig import NginxConfig
 
 from target.common.config import Config
-from target.common.system import sysCommand
 from target.common.pylog import functionLog
+from target.common.system import sysCommand
 
 
 class Nginx:
+    """ Nginx domain
+    """
     def __init__(self):
         """init nginx domain
 
@@ -63,10 +65,10 @@ class Nginx:
                 param_value = res[1]
                 return True, param_value
 
-        except KeyError as e:
+        except KeyError:
             return False, "No such parameter as {}".format(param_name)
 
-        except TypeError as e:
+        except TypeError:
             return False, "No such parameter as {}".format(param_name)
 
     @functionLog
@@ -128,7 +130,7 @@ class Nginx:
                 else:
                     self._appendParam("http", (param_name, param_value))
 
-        except KeyError as e:
+        except KeyError:
             return False, "No such parameter as {}".format(param_name)
 
         else:
@@ -200,7 +202,7 @@ class Nginx:
         """ rollback parameter values in nginx.conf.
 
         1. Copy parameter values from backup file to nginx.conf
-        2. restart nginx service if success to rollback nginx.conf. 
+        2. restart nginx service if success to rollback nginx.conf.
 
         Returns:
             bool: whether success to rollback.

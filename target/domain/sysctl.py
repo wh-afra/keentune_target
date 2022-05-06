@@ -1,14 +1,14 @@
 import os
 import re
-import time
 import subprocess
+import time
 
 from target.common.config import Config
-from target.common.system import sysCommand
 from target.common.pylog import functionLog
+from target.common.system import sysCommand
 
 
-def _sysCommand(cmd: str):
+def _sys_command(cmd: str):
     result = subprocess.run(
         cmd,
         shell=True,
@@ -76,7 +76,7 @@ class Sysctl:
         Config.backup_dir, "{}_backup.sh".format(name))
 
     def __init__(self):
-        super().__init__()
+        pass
 
     @functionLog
     def setParamAll(self, param_list: dict):
@@ -116,10 +116,11 @@ class Sysctl:
 
         install_file = os.path.join(
             Config.backup_dir, "param_set_{}.sh".format(int(time.time())))
-        with open(install_file, 'w') as f:
+        
+        with open(install_file, 'w', encoding="utf-8") as f:
             f.write(cmd)
 
-        _, out, err = _sysCommand("bash {}".format(install_file))
+        _, out, err = _sys_command("bash {}".format(install_file))
         suc, result = _parseResult(out, err, param_list)
         return suc, result
 
@@ -128,29 +129,29 @@ class Sysctl:
         """ Get parameter value of sysctl.
 
         Args:
-            param_list (dict): parameter dict. e.g. 
+            param_list (dict): parameter dict. e.g.
             {
                 [parameter_name]: {
-                    'dtype': [parameter_dtype], 
+                    'dtype': [parameter_dtype],
                 },
                 ...
             }
 
         Returns:
             suc (bool): if sucess to set parameters.
-            result (dict): parameter setting result. e.g. 
+            result (dict): parameter setting result. e.g.
             {
                 [parameter_name]: {
-                    'dtype': [parameter_dtype], 
+                    'dtype': [parameter_dtype],
                     'value': [parameter_value],
                     'suc'  : [if success to set the parameter],
                     'msg'  : [error message]
                 },
                 ...
-            }        
+            }
         """
         result = {}
-        SUC = True
+        success = True
         for param_name, param_info in param_list.items():
             suc, param_value = sysCommand(
                 command=self.get_cmd.format(name=param_name.strip()),
@@ -164,14 +165,14 @@ class Sysctl:
                     "msg": ""
                 }
             else:
-                SUC = False
+                success = False
                 result[param_name] = {
                     "value": "",
                     "dtype": param_info["dtype"],
                     "suc": False,
                     "msg": param_value
                 }
-        return SUC, result
+        return success, result
 
     @functionLog
     def backup(self, param_list: dict):
@@ -180,10 +181,10 @@ class Sysctl:
         Generating backup file as .sh
 
         Args:
-            param_list (dict): parameter to backupt. e.g. 
+            param_list (dict): parameter to backupt. e.g.
             {
                 [parameter_name]: {
-                    'dtype': [parameter_dtype], 
+                    'dtype': [parameter_dtype],
                 },
                 ...
             }
@@ -192,31 +193,30 @@ class Sysctl:
             suc (bool): if sucess to set parameters.
             msg (str) : error message or backup file path.
         """
-        SUC = True
+        success = True
         backup_content = ""
-        Errormsg = ""
+        error_msg = ""
 
-        for param_name, param_info in param_list.items():
+        for param_name, _ in param_list.items():
             suc, param_value = sysCommand(
                 command=self.get_cmd.format(name=param_name.strip()),
                 cwd=Config.keentune_script_dir)
 
             if not suc:
-                SUC = False
-                Errormsg += param_value + "\n"
+                success = False
+                error_msg += param_value + "\n"
                 continue
 
             backup_content += self.set_cmd.format(
                 name=param_name.strip(),
                 value=param_value) + "\n"
 
-        with open(self.backup_file, "w") as f:
+        with open(self.backup_file, "w", encoding = "utf-8") as f:
             f.write(backup_content)
 
-        if SUC:
+        if success:
             return True, self.backup_file
-        else:
-            return False, Errormsg
+        return False, error_msg
 
     @functionLog
     def rollback(self):

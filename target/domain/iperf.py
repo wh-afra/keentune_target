@@ -50,8 +50,8 @@ class Iperf:
         result = {}
         for param_name, param_info in param_list.items():
             result[param_name] = {
-                "value": param_dict[param_name], 
-                "dtype": param_info["dtype"], 
+                "value": param_dict[param_name],
+                "dtype": param_info["dtype"],
                 "suc": True, 
                 "msg": ""
             }
