@@ -6,6 +6,22 @@
 ---  
 KeenTune-target is the optimization setting component, which is the only component of KeenTune that needs to be deployed in business environments. It is used to set optimized settings in dynamic and static tuning workflows, with operations such as parameter set, get, backup, and rollback.
 
+## supported parameters domain
+#### OS kernel-sysctl.conf
+Domain name: sysctl
+Requirements: None
+
+#### Benchmark knobs-iperf
+Domain name: iperf
+Requirements: 
++ Keentune-Bench already installed in current environment
+
+### Application parameters-Nginx
+Domain name: nginx
+Requirements: 
++ Nginx server already installed in current environment
++ pynginxconfig package already installed in current environment
+
 ## Installation
 ---  
 ### 1. install python-setuptools
