@@ -8,17 +8,17 @@ KeenTune-target 业务侧优化设置组件，这是唯一必须部署在业务�
 
 ## 支持调优的参数
 #### 内核参数-sysctl.conf
-Domain name: sysctl
-Requirements: None
+Domain name: sysctl  
+Requirements: None  
 
 #### Benchmark参数-iperf
-Domain name: iperf
-Requirements: 
-+ Keentune-Bench安装在当前环境中
+Domain name: iperf  
+Requirements:   
++ Keentune-Bench安装在当前环境中  
 
 ### 应用参数-Nginx
-Domain name: nginx
-Requirements: 
+Domain name: nginx  
+Requirements:   
 + 当前环境中已安装Nginx
 + 当前环境中已安装pynginxconfig包
 
