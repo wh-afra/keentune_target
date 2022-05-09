@@ -3,7 +3,6 @@ Description=Tuning tool Daemon For Target
 After=systemd-sysctl.service network.target keentuned.service
 
 [Service]
-EnvironmentFile=/etc/keentune/conf/target.conf
 ExecStart=/usr/bin/keentune-target
 Type=simple
 
