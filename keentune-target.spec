@@ -1,11 +1,11 @@
-%define anolis_release 0
+%define anolis_release 1
 
 #
 # spec file for package KeenTune-target
 #
 
 Name:           keentune-target
-Version:        1.1.1
+Version:        1.1.2
 Release:        %{?anolis_release}%{?dist}
 Url:            https://gitee.com/anolis/keentune_target
 Summary:        Parameters setting, reading and backup models for KeenTune
@@ -51,6 +51,9 @@ fi
 %{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
+* Mon May 09 2022 Runzhe Wang <15501019889@126.com> - 1.1.2
+- update .service file
+
 * Fri May 06 2022 Runzhe Wang <15501019889@126.com> - 1.1.1
 - Modify code format and style
 
