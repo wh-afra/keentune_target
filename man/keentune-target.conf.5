@@ -1,0 +1,56 @@
+.TH "keentune-target.conf" "5" "5 May 2022" "KeenTune"
+.SH NAME
+keentune-target.conf - keentune-target configuration file
+.SH SYNOPSIS
+.B /etc/keentune/conf/keentune-target.conf
+.SH DESCRIPTION
+This man page documents format of the keentune-target configuration file.
+The \fIkeentune-target.conf\fR file uses the ini\-file format.
+.
+.SH "[home]"
+.
+.TP
+\fBKeenTune_HOME = /etc/keentune/\fR
+Keentune install path
+.
+.TP
+\fBKeenTune_WORKSPACE = /var/keentune/\fR
+Keentune workspace
+.
+.SH "[target]"
+.
+.TP
+\fBTARGET_PORT = 9873\fR
+Keentune-target runs the port
+.
+.SH "[log]"
+.
+.TP
+\fBCONSOLE_LEVEL = ERROR\fR
+Logging level of terminal output
+.
+.TP
+\fBLOGFILE_LEVEL = DEBUG\fR
+The log level of log file output
+.
+.TP
+\fBLOGFILE_PATH  = /var/log/keentune/target.log\fR
+Log File Name
+.
+.TP
+\fBLOGFILE_INTERVAL = 1\fR
+The time interval of the log file
+.
+.TP
+\fBLOGFILE_BACKUP_COUNT = 14\fR
+Number of log files saved
+
+.SH FILES
+.I /etc/keentune/conf/keentune-target.conf
+
+.SH "SEE ALSO"
+.LP
+keentune(8)
+
+.SH "BUGS"
+Report bugs at: https://gitee.com/anolis/keentuned/issues
