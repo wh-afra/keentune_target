@@ -30,20 +30,6 @@ def _parseResult(out: str, err: str, param_list: list):
     failed_lsit  = err.split('\n')
 
     for param_name, param_info in param_list.items():
-        for ele in success_list:
-            match = re.match(r"({}) = (.+)".format(param_name), ele)
-            if match is not None:
-                result[param_name] = {
-                    "value" : match.group(2),
-                    "dtype" : param_info["dtype"],
-                    "suc"   : True,
-                    "msg"   : ele
-                }
-                break
-
-        if result.__contains__(param_name):
-            continue
-
         for ele in failed_lsit:
             match = re.search(param_name, ele)
             if match is not None:
@@ -54,6 +40,20 @@ def _parseResult(out: str, err: str, param_list: list):
                     "msg"   : ele
                 }
                 SUCCESS = False
+                break
+        
+        if result.__contains__(param_name):
+            continue
+
+        for ele in success_list:
+            match = re.match(r"({}) = (.+)".format(param_name), ele)
+            if match is not None:
+                result[param_name] = {
+                    "value" : match.group(2),
+                    "dtype" : param_info["dtype"],
+                    "suc"   : True,
+                    "msg"   : ele
+                }
                 break
 
         if not result.__contains__(param_name):
