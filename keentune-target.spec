@@ -5,7 +5,7 @@
 #
 
 Name:           keentune-target
-Version:        1.1.2
+Version:        1.1.3
 Release:        %{?anolis_release}%{?dist}
 Url:            https://gitee.com/anolis/keentune_target
 Summary:        Parameters setting, reading and backup models for KeenTune
@@ -16,7 +16,14 @@ Source:         %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
+BUildRequires:	systemd
+
 BuildArch:      noarch
+
+Requires:	python3-tornado
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
 
 Vendor:         Alibaba
 
@@ -24,7 +31,7 @@ Vendor:         Alibaba
 Parameters setting, reading and backup models for KeenTune
 
 %prep
-%setup -q -n %{name}-%{version}
+%autosetup -n keentune_target-v%{version}
 
 %build
 %{__python3} setup.py build
@@ -37,20 +44,25 @@ cp -f ./keentune-target.service ${RPM_BUILD_ROOT}/usr/lib/systemd/system/
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+%systemd_post keentune-target.service
+
+%preun
+%systemd_preun keentune-target.service
+
 %postun
-SCRIPT_DIR=%{_sysconfdir}/keentune/script
-CONF_DIR=%{_sysconfdir}/keentune/conf
-rm -rf $SCRIPT_DIR
-if [ "$(ls -A $CONF_DIR)" = "" ]; then
-        rm -rf $CONF_DIR
-fi
+%systemd_postun_with_restart keentune-target.service
 
 %files -f INSTALLED_FILES
 %defattr(-,root,root)
+%doc README.md README_cn.md
 %license LICENSE
 %{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
+* Mon May 09 2022 Runzhe Wang <15501019889@126.com> - 1.1.3
+- update .spec file
+
 * Mon May 09 2022 Runzhe Wang <15501019889@126.com> - 1.1.2
 - update .service file
 
