@@ -35,6 +35,7 @@ mkdir -p ${RPM_BUILD_ROOT}/usr/lib/systemd/system/
 cp -f ./keentune-target.service ${RPM_BUILD_ROOT}/usr/lib/systemd/system/
 install -D -m644 man/keentune-target.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/keentune-target.8
 install -D -m644 man/keentune-target.conf.5 ${RPM_BUILD_ROOT}%{_mandir}/man5/keentune-target.conf.5
+install -D -m644 man/keentune-target.domain.7 ${RPM_BUILD_ROOT}%{_mandir}/man7/keentune-target.domain.7
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -53,6 +54,7 @@ fi
 %{_prefix}/lib/systemd/system/keentune-target.service
 %{_mandir}/man8/keentune-target.8*
 %{_mandir}/man5/keentune-target.conf.5*
+%{_mandir}/man5/keentune-target.domain.7*
 
 %changelog
 * Wed Jan 26 2022 lilinjie <lilinjie@uniontech.com> - 1.0.0-6
