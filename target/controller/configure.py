@@ -57,14 +57,14 @@ class ConfigureHandler(RequestHandler):
         """
         global DOMAINOBJ
         domain_result = {}
-        SUCCESS = True
+        SUCCESS = False
         for domain in param_domain_dict.keys():
             param_list = param_domain_dict[domain]
             if readonly:
                 suc, out = DOMAINOBJ[domain].getParamAll(param_list)
             else:
                 suc, out = DOMAINOBJ[domain].setParamAll(param_list)
-            SUCCESS = SUCCESS and suc
+            SUCCESS = SUCCESS or suc
             domain_result[domain] = out
         return SUCCESS, domain_result
 
