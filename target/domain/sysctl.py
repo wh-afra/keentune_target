@@ -150,7 +150,7 @@ class Sysctl:
             }        
         """
         result = {}
-        SUC = True
+        SUC = False
         for param_name, param_info in param_list.items():
             suc, param_value = sysCommand(
                 command=self.get_cmd.format(name=param_name.strip()),
@@ -163,8 +163,8 @@ class Sysctl:
                     "suc": True,
                     "msg": ""
                 }
+                SUC = True
             else:
-                SUC = False
                 result[param_name] = {
                     "value": "",
                     "dtype": param_info["dtype"],
