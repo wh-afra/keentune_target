@@ -3,6 +3,7 @@ import sys
 import unittest
 
 from test_target_configure import TestTargetConfigure
+from test_target_backup import TestTargetBackup
 
 os.chdir(os.path.abspath(os.path.join(os.getcwd(), "test")))
 
@@ -10,6 +11,7 @@ os.chdir(os.path.abspath(os.path.join(os.getcwd(), "test")))
 def RunModelCase():
     suite = unittest.TestSuite()
     suite.addTest(TestTargetConfigure('test_target_server_FUN_configure'))
+    suite.addTest(TestTargetBackup('test_target_server_FUN_backup'))
     return suite
 
 
