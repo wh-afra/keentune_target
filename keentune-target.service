@@ -1,6 +1,7 @@
 [Unit]
 Description=Tuning tool Daemon For Target
 After=systemd-sysctl.service network.target keentuned.service
+Conflicts=tuned.service
 
 [Service]
 ExecStart=/usr/bin/keentune-target
