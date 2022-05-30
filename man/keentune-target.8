@@ -11,17 +11,40 @@
 .\" */
 .\".
 .TH "keentune-target" "8" "5 May 2022" "OpenAnolis KeenTune SIG" "KeenTune"
+.
 .SH NAME
 KeenTune-target - optimization setting component
+.
 .SH SYNOPSIS
 \fBKeenTune-target\fP
+.
 .SH DESCRIPTION
 \fBKeenTune-target\fR KeenTune-target is the optimization setting component, which is the only component of KeenTune that needs to be deployed in business environments. It is used to set optimized settings in dynamic and static tuning workflows, with operations such as parameter set, get, backup, and rollback.
-
+.
+.SH "Set parameters configuration"
+Apply the specified parameter configuration to this environment.
+.
+.SH "Read parameters configuration"
+Read the parameter configuration of this environment.
+.
+.SH "backup"
+Backup the parameter configuration of this environment to file.
+.
+.SH "rollback"
+Rollback to parameter configuration defined in backup file.
+.
 .SH "Run"
 .
 .TP
 \fBsystemctl start keentune-target.service\fR
+.
+.SH "FILES"
+.I /etc/keentune/
+.
+.SH "SEE ALSO"
+.LP
+keentune-target.conf(5)
+keentune-target.domain(7)
 
 .SH "BUGS"
 Report bugs at: https://gitee.com/anolis/keentuned/issues
