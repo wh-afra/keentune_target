@@ -54,7 +54,7 @@ fi
 %{_prefix}/lib/systemd/system/keentune-target.service
 %{_mandir}/man8/keentune-target.8*
 %{_mandir}/man5/keentune-target.conf.5*
-%{_mandir}/man5/keentune-target.domain.7*
+%{_mandir}/man7/keentune-target.domain.7*
 
 %changelog
 * Wed Jan 26 2022 lilinjie <lilinjie@uniontech.com> - 1.0.0-6
