@@ -1,5 +1,4 @@
 import os
-import time
 import subprocess
 from pynginxconfig import NginxConfig
 
@@ -64,10 +63,10 @@ class Nginx:
                 param_value = res[1]
                 return True, param_value
 
-        except KeyError as e:
+        except KeyError:
             return False, "No such parameter as {}".format(param_name)
 
-        except TypeError as e:
+        except TypeError:
             return False, "No such parameter as {}".format(param_name)
 
     @functionLog
@@ -129,7 +128,7 @@ class Nginx:
                 else:
                     self._appendParam("http", (param_name, param_value))
 
-        except KeyError as e:
+        except KeyError:
             return False, "No such parameter as {}".format(param_name)
 
         else:

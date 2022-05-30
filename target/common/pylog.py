@@ -142,7 +142,7 @@ def normalFuncLog(func):
         try:
             out = func(*args, **kw)
 
-        except Exception as e:
+        except Exception:
             logger.critical('[{module}.{func}] {trace}'.format(
                 module=func.__module__,
                 func=func.__qualname__,
@@ -193,7 +193,7 @@ def APILog(func):
         try:
             func(*args, **kw)
 
-        except Exception as e:
+        except Exception:
             logger.critical("{api_name} {trace}".format(
                 api_name=func.__qualname__,
                 trace=traceback.format_exc()))
