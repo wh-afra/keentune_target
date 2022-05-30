@@ -5,7 +5,32 @@ import subprocess
 
 from target.common.config import Config
 from target.common.system import sysCommand
-from target.common.pylog import functionLog
+from target.common.pylog import logger
+
+
+def initialize(action):
+    logger.info("Initialize backup file: action = {}".format(action))
+    initialize_dir="/var/keentune/ServiceBackup"
+    backup_file=os.path.join(initialize_dir, "sysctl.cnf")
+    if action == "backup":
+        if os.path.exists(backup_file):
+            return True, "backup file:{} exists, no need to backup again".format(backup_file)
+        backup_cmd="sysctl -a > {}".format(backup_file)
+        suc, _, err = _sysCommand(backup_cmd)
+        if not suc:
+            return False, "Backup parameters failed, reason:{}".format(err)
+        return True, "Backup kernel parameters succeeded. Procedure"
+
+    elif action == "rollback":
+        if not os.path.exists(backup_file):
+            return True, "No backup file was found"
+
+        backup_cmd="sysctl -p {}".format(backup_file)
+        suc, _, err = _sysCommand(backup_cmd)
+        if not suc:
+            return False, "Failed to rollback kernel parameters. Procedure, reason:{}".format(err)
+        os.remove(backup_file)
+        return True, "The rollback of kernel parameters succeeded. Procedure"
 
 
 def _sysCommand(cmd: str):
@@ -25,11 +50,14 @@ def _sysCommand(cmd: str):
 
 def _parseResult(out: str, err: str, param_list: list):
     result = {}
-    SUCCESS = True
+    SUCCESS = False
     success_list = out.split('\n')
     failed_lsit  = err.split('\n')
 
     for param_name, param_info in param_list.items():
+        if result.__contains__(param_name):
+            continue
+        
         for ele in failed_lsit:
             match = re.search(param_name, ele)
             if match is not None:
@@ -39,11 +67,8 @@ def _parseResult(out: str, err: str, param_list: list):
                     "suc"   : False,
                     "msg"   : ele
                 }
-                SUCCESS = False
+                logger.warning("Failed to set knobs {}: {}".format(param_name, ele))
                 break
-
-        if result.__contains__(param_name):
-            continue
 
         for ele in success_list:
             match = re.match(r"({}) = (.+)".format(param_name), ele)
@@ -54,6 +79,8 @@ def _parseResult(out: str, err: str, param_list: list):
                     "suc"   : True,
                     "msg"   : ele
                 }
+                logger.debug("set knobs {}: {}".format(param_name,ele))
+                SUCCESS = True
                 break
 
         if not result.__contains__(param_name):
@@ -63,7 +90,7 @@ def _parseResult(out: str, err: str, param_list: list):
                 "suc"   : False,
                 "msg"   : "can not find the param in output"
             }
-            SUCCESS = False
+            logger.warning("Failed to set knobs {}: can not find it in output".format(param_name))
 
     return SUCCESS, result
 
@@ -78,7 +105,6 @@ class Sysctl:
     def __init__(self):
         super().__init__()
 
-    @functionLog
     def setParamAll(self, param_list: dict):
         """ Set parameters of sysctl.
 
@@ -109,21 +135,27 @@ class Sysctl:
         for param_name, param_info in param_list.items():
             if param_info['value'] == "":
                 continue
-
             cmd += self.set_cmd.format(
-                name=param_name.strip(),
-                value=param_info['value']) + "\n"
+                name  = param_name.strip(),
+                value = param_info['value']) + "\n"
 
         install_file = os.path.join(
-            Config.backup_dir, "param_set_{}.sh".format(int(time.time())))
+            Config.backup_dir, 
+            "param_set_{}.sh".format(int(time.time()))
+        )
+        logger.info("Generating knobs setting script: {}".format(install_file))
         with open(install_file, 'w') as f:
             f.write(cmd)
 
+        logger.info("Run knobs setting script: bash {}".format(install_file))
         _, out, err = _sysCommand("bash {}".format(install_file))
+
+        logger.info("parse result of setting script.")
         suc, result = _parseResult(out, err, param_list)
+
         return suc, result
 
-    @functionLog
+
     def getParamAll(self, param_list: dict):
         """ Get parameter value of sysctl.
 
@@ -150,11 +182,11 @@ class Sysctl:
             }        
         """
         result = {}
-        SUC = False
+        SUCCESS = False
         for param_name, param_info in param_list.items():
             suc, param_value = sysCommand(
-                command=self.get_cmd.format(name=param_name.strip()),
-                cwd=Config.keentune_script_dir)
+                command = self.get_cmd.format(name=param_name.strip()),
+                cwd     = Config.keentune_script_dir)
 
             if suc:
                 result[param_name] = {
@@ -163,7 +195,7 @@ class Sysctl:
                     "suc": True,
                     "msg": ""
                 }
-                SUC = True
+                SUCCESS = True
             else:
                 result[param_name] = {
                     "value": "",
@@ -171,9 +203,11 @@ class Sysctl:
                     "suc": False,
                     "msg": param_value
                 }
-        return SUC, result
+                logger.warning("Failed to read knobs {}: {}".format(param_name, param_value))
+            
+        return SUCCESS, result
 
-    @functionLog
+
     def backup(self, param_list: dict):
         """ Save sysctl parameter value to backup file.
 
@@ -192,33 +226,33 @@ class Sysctl:
             suc (bool): if sucess to set parameters.
             msg (str) : error message or backup file path.
         """
-        SUC = True
+        SUCCESS = True
         backup_content = ""
         Errormsg = ""
 
-        for param_name, param_info in param_list.items():
+        for param_name, _ in param_list.items():
             suc, param_value = sysCommand(
-                command=self.get_cmd.format(name=param_name.strip()),
-                cwd=Config.keentune_script_dir)
-
+                command = self.get_cmd.format(name=param_name.strip()),
+                cwd     = Config.keentune_script_dir)
             if not suc:
-                SUC = False
+                SUCCESS = False
                 Errormsg += param_value + "\n"
+                logger.warning("Failed to read knobs value {}: {}".format(param_name, param_value))
                 continue
-
             backup_content += "{name}={value}".format(
-                name=param_name.strip(),
-                value=param_value) + "\n"
+                name  = param_name.strip(),
+                value = param_value) + "\n"
 
+        logger.info("Generating rollback script:{}".format(self.backup_file))
         with open(self.backup_file, "w") as f:
             f.write(backup_content)
 
-        if SUC:
+        if SUCCESS:
             return True, self.backup_file
         else:
             return False, Errormsg
 
-    @functionLog
+
     def rollback(self):
         """ Rollback to base configuration.
 
@@ -233,31 +267,10 @@ class Sysctl:
         if suc:
             backup_time = time.asctime(time.localtime(
                 os.path.getctime(self.backup_file)))
+            logger.info("Rollback to backup time: {}".format(backup_time))
             os.remove(self.backup_file)
             return True, backup_time
+
         else:
+            logger.error("Failed to rollback: {}".format(res))
             return False, res
-
-@functionLog
-def initialize(action):
-    initialize_dir="/var/keentune/ServiceBackup"
-    backup_file=os.path.join(initialize_dir, "sysctl.cnf")
-    if action == "backup":
-        if os.path.exists(backup_file):
-            return True, "backup file:{} exists, no need to backup again".format(backup_file)
-        backup_cmd="sysctl -a > {}".format(backup_file)
-        suc, out, err = _sysCommand(backup_cmd)
-        if not suc:
-            return False, "Backup parameters failed, reason:{}".format(err)
-        return True, "Backup kernel parameters succeeded. Procedure"
-
-    elif action == "rollback":
-        if not os.path.exists(backup_file):
-            return True, "No backup file was found"
-
-        backup_cmd="sysctl -p {}".format(backup_file)
-        suc, out, err = _sysCommand(backup_cmd)
-        if not suc:
-            return False, "Failed to rollback kernel parameters. Procedure, reason:{}".format(err)
-        os.remove(backup_file)
-        return True, "The rollback of kernel parameters succeeded. Procedure"
