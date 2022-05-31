@@ -3,7 +3,7 @@ import requests
 import unittest
 
 
-class TestTargetBackup(unittest.TestCase):
+class TestTargetRollback(unittest.TestCase):
     def setUp(self) -> None:
         self.proxies={"http": None, "https": None}
         url = "http://{}:{}/status".format("localhost", "9873")
@@ -12,16 +12,6 @@ class TestTargetBackup(unittest.TestCase):
             print("ERROR: Can't reach KeenTune-Target.")
             exit()
             
-    def tearDown(self) -> None:
-        url = "http://{}:{}/{}".format("localhost", "9873", "rollback")
-        data = {}
-        headers = {"Content-Type": "application/json"}
-        
-        result = requests.post(url, data=json.dumps(data), headers=headers, proxies=self.proxies)
-        self.assertEqual(result.status_code, 200)
-        self.assertIn('"suc": true', result.text)
-
-    def test_target_server_FUN_backup(self):
         url = "http://{}:{}/{}".format("localhost", "9873", "backup")
         data = {
             "sysctl": {
@@ -34,4 +24,15 @@ class TestTargetBackup(unittest.TestCase):
         
         result = requests.post(url, data=json.dumps(data), headers=headers, proxies=self.proxies)
         self.assertEqual(result.status_code, 200)
-        self.assertIn(result.text, '{"suc": true, "msg": {"sysctl": "/var/keentune/backup/sysctl_backup.conf"}}')
+        self.assertEqual(result.text, '{"suc": true, "msg": {"sysctl": "/var/keentune/backup/sysctl_backup.conf"}}')
+        
+    def tearDown(self) -> None:
+        pass
+
+    def test_target_server_FUN_rollback(self):
+        url = "http://{}:{}/{}".format("localhost", "9873", "rollback")
+        data = {}
+        headers = {"Content-Type": "application/json"}
+        result = requests.post(url, data=json.dumps(data), headers=headers, proxies=self.proxies)
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('"suc": true', result.text)
