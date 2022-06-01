@@ -5,8 +5,7 @@ import unittest
 from test_target_configure import TestTargetConfigure
 from test_target_backup import TestTargetBackup
 from test_target_rollback import TestTargetRollback
-
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "test")))
+from test_target_status import TestTargetStatus
 
 
 def RunModelCase():
@@ -14,6 +13,7 @@ def RunModelCase():
     suite.addTest(TestTargetConfigure('test_target_server_FUN_configure'))
     suite.addTest(TestTargetBackup('test_target_server_FUN_backup'))
     suite.addTest(TestTargetRollback('test_target_server_FUN_rollback'))
+    suite.addTest(TestTargetStatus('test_target_server_FUN_status'))
     return suite
 
 
