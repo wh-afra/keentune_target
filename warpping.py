@@ -1,12 +1,24 @@
 import re  
-import os  
+import os
+from datetime import datetime
+
+source_dir = os.path.split(os.path.realpath(__file__))[0]
+
+def dateCheck(spec):
+    date_items = re.findall(r"\* (\w+) (\w+) (\d+) (\d+) .*",spec)
+    for date in date_items:
+        _date = datetime.strptime("{} {} {}".format(date[3], date[1], date[2]),"%Y %b %d")
+        if not _date.strftime("%a") == date[0]:
+            raise Exception("week error:'{}', should be '{}'".format(date, _date.strftime("%a")))
+
 
 def warppingCheck():
-    with open(os.path.join(os.path.split(os.path.realpath(__file__))[0],"keentune-target.spec"),'r') as f:
+    with open(os.path.join(source_dir,"keentune-target.spec"),'r') as f:
         spec = f.read()
         version_in_spec = re.search("Version:        ([\d.]+)\n",spec).group(1)
         release_in_spec = re.search("define anolis_release (\d)\n",spec).group(1)
         print("Get version: {}-{}".format(version_in_spec, release_in_spec))
+        dateCheck(spec)
 
         if re.search(" - {}-{}".format(version_in_spec, release_in_spec), spec):
             print("[OK] check the version of changelog at keentune-target.spec.")
@@ -14,7 +26,7 @@ def warppingCheck():
             print("[Failed] wrong version number in changelog at keentune-target.spec.")
             return
 
-    with open(os.path.join(os.path.split(os.path.realpath(__file__))[0],"setup.py"), 'r') as f:
+    with open(os.path.join(source_dir,"setup.py"), 'r') as f:
         script = f.read()
         if re.search('version     = "{}",'.format(version_in_spec),script):
             print("[OK] check the version of setup.py.")
@@ -31,10 +43,18 @@ if __name__ == "__main__":
         os.system("rm -rf keentune-target-{}".format(version_in_spec))
     
     os.system("mkdir keentune-target-{}".format(version_in_spec))
-    os.system("cp -r target keentune-target-{}".format(version_in_spec))
-    os.system("cp keentune-target.service keentune-target-{}".format(version_in_spec))
-    os.system("cp LICENSE keentune-target-{}".format(version_in_spec))
-    os.system("cp README.md keentune-target-{}".format(version_in_spec))
-    os.system("cp requirements.txt keentune-target-{}".format(version_in_spec))
-    os.system("cp setup.py keentune-target-{}".format(version_in_spec))
-    os.system("tar -cvzf keentune-target-{}.tar.gz --exclude=**/__pycache__ keentune-target-{}".format(version_in_spec, version_in_spec))
+
+    os.system("cp -r {} keentune-target-{}".format(os.path.join(source_dir,"target"), version_in_spec))
+    os.system("cp -r {} keentune-target-{}".format(os.path.join(source_dir,"keentune-target.service"), version_in_spec))
+    os.system("cp -r {} keentune-target-{}".format(os.path.join(source_dir,"LICENSE"), version_in_spec))
+    os.system("cp -r {} keentune-target-{}".format(os.path.join(source_dir,"README.md"), version_in_spec))
+    os.system("cp -r {} keentune-target-{}".format(os.path.join(source_dir,"requirements.txt"), version_in_spec))
+    os.system("cp -r {} keentune-target-{}".format(os.path.join(source_dir,"setup.py"), version_in_spec))
+
+    os.system("tar -cvzf keentune-target-{}.tar.gz --exclude=**/__pycache__ keentune-target-{}".format(
+        version_in_spec, version_in_spec))
+
+    if os.path.exists("keentune-target-{}".format(version_in_spec)):
+        os.system("rm -rf keentune-target-{}".format(version_in_spec))
+
+    os.system("cp {} ./".format(os.path.join(source_dir, "keentune-target.spec")))
