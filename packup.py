@@ -2,6 +2,20 @@ import re
 import os
 from datetime import datetime
 
+""" warpping the KeenTune module keentune-target
+
+This script will
+1. Check the version number in *.spec and setup.py
+2. Check the date of changelog in *.spec
+3. Pick necessary file to a folder named as keentune-target-{version}
+4. Pack the folder to .tar.gz
+5. Get a copy of *.spec.
+
+You can run this script in any position as 
+
+python3 /path/in/your/environment/packup.py
+"""
+
 source_dir = os.path.split(os.path.realpath(__file__))[0]
 
 def dateCheck(spec):
