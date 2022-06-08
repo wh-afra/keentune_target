@@ -81,13 +81,13 @@ fi
 * Fri May 06 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.1.1
 - Modify code format and style
 
-* Wed Mar 03 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.1.0
+* Thu Mar 03 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.1.0
 - Add support for GP (in iTuned) in sensitizing algorithms
 - Add support for lasso in sensitizing algorithms
 - refactor tornado module: replace await by threadpool
 - lazy load domain in keentune-target
 
-* Wed Jan 01 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.0.1
+* Sat Jan 01 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.0.1
 - Verify input arguments of command 'param tune'
 - Supporting of multiple target tuning
 - Fix bug which cause keentune hanging after command 'param stop'
@@ -96,7 +96,7 @@ fi
 - Refactor sysctl domain to improve stability of parameter setting
 - Fix some user experience issues
 
-* Wed Dec 12 2021 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.0.0
+* Sun Dec 12 2021 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.0.0
 - change modify codeup address to gitee
 - add keentune to systemd
 - fix: wrong license in setup.py
