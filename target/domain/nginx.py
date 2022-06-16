@@ -172,11 +172,10 @@ class Nginx:
             obj : result dictionary or error message
         """
         self.nginx_conf.loadf(self.nginx_config_path)
-        log_value = """main  '$remote_addr - $remote_user [$time_local] "$request" '
-                    '$status $body_bytes_sent "$http_referer" '
-                    '"$http_user_agent" "$http_x_forwarded_for"'"""
-        self.nginx_conf.set([("http",), "log_format"], log_value)
-        self.nginx_conf.set([("http",), "access_log"], "off")
+        if self.nginx_conf.get([("http",), "log_format"]):
+            self.nginx_conf.set([("http",), "log_format"], self.nginx_conf.get([("http",), "log_format"]))
+        if self.nginx_conf.get([("http",), "access_log"]):
+            self.nginx_conf.set([("http",), "access_log"], "off")
 
         result = {}
         for param_name, param_info in param_list.items():
