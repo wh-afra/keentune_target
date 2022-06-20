@@ -25,11 +25,14 @@ def _sys_command(cmd: str):
 
 def _parseResult(out: str, err: str, param_list: list):
     result = {}
-    SUCCESS = True
+    SUCCESS = False
     success_list = out.split('\n')
     failed_lsit  = err.split('\n')
 
     for param_name, param_info in param_list.items():
+        if result.__contains__(param_name):
+            continue
+
         for ele in failed_lsit:
             match = re.search(param_name, ele)
             if match is not None:
@@ -39,11 +42,6 @@ def _parseResult(out: str, err: str, param_list: list):
                     "suc"   : False,
                     "msg"   : ele
                 }
-                SUCCESS = False
-                break
-        
-        if result.__contains__(param_name):
-            continue
 
         for ele in success_list:
             match = re.match(r"({}) = (.+)".format(param_name), ele)
@@ -54,7 +52,7 @@ def _parseResult(out: str, err: str, param_list: list):
                     "suc"   : True,
                     "msg"   : ele
                 }
-                break
+                SUCCESS = True
 
         if not result.__contains__(param_name):
             result[param_name] = {
@@ -63,7 +61,6 @@ def _parseResult(out: str, err: str, param_list: list):
                 "suc"   : False,
                 "msg"   : "can not find the param in output"
             }
-            SUCCESS = False
 
     return SUCCESS, result
 
@@ -151,7 +148,7 @@ class Sysctl:
             }
         """
         result = {}
-        success = True
+        success = False
         for param_name, param_info in param_list.items():
             suc, param_value = sysCommand(
                 command=self.get_cmd.format(name=param_name.strip()),
@@ -164,8 +161,8 @@ class Sysctl:
                     "suc": True,
                     "msg": ""
                 }
+                success = True
             else:
-                success = False
                 result[param_name] = {
                     "value": "",
                     "dtype": param_info["dtype"],
