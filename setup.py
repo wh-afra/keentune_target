@@ -4,7 +4,7 @@ long_description = ""
 
 setup(
     name        = "keentune-target",
-    version     = "1.1.0",
+    version     = "1.2.1",
     description = "KeenTune target unit",
     url         = "https://gitee.com/anolis/keentune_target",
     license     = "MulanPSLv2",
