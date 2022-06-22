@@ -27,8 +27,8 @@ Parameters setting, reading and backup models for KeenTune
 
 %install
 %{__python3} setup.py install --single-version-externally-managed -O1 --prefix=%{_prefix} --root=%{buildroot} --record=INSTALLED_FILES
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib/systemd/system/
-cp -f ./keentune-target.service ${RPM_BUILD_ROOT}/usr/lib/systemd/system/
+mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/systemd/system/
+cp -f ./keentune-target.service ${RPM_BUILD_ROOT}/usr/lib64/systemd/system/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
