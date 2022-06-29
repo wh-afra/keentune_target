@@ -31,7 +31,7 @@ class Wrk:
             "msg": ""
         }
 
-        path = os.path.join(Config.keentune_workspace, "files", "benchmark/wrk/wrk_nginx_long.py")
+        path = os.path.join(Config.keentune_workspace, "files", "benchmark/wrk/wrk_parameter_tuning.py")
         with open(path, "r", encoding='UTF-8') as f:
             data = f.read()
             data = re.sub(r'DEFAULT = "[a-zA-Z0-9\-=\s]*"', 'DEFAULT = "{}"'.format(command), data)
