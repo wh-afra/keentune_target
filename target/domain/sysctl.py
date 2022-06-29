@@ -7,32 +7,6 @@ from target.common.config import Config
 from target.common.system import sysCommand
 from target.common.pylog import logger
 
-
-def initialize(action):
-    logger.info("Initialize backup file: action = {}".format(action))
-    initialize_dir="/var/keentune/ServiceBackup"
-    backup_file=os.path.join(initialize_dir, "sysctl.cnf")
-    if action == "backup":
-        if os.path.exists(backup_file):
-            return True, "backup file:{} exists, no need to backup again".format(backup_file)
-        backup_cmd="sysctl -a > {}".format(backup_file)
-        suc, _, err = _sysCommand(backup_cmd)
-        if not suc:
-            return False, "Backup parameters failed, reason:{}".format(err)
-        return True, "Backup kernel parameters succeeded. Procedure"
-
-    elif action == "rollback":
-        if not os.path.exists(backup_file):
-            return True, "No backup file was found"
-
-        backup_cmd="sysctl -p {}".format(backup_file)
-        suc, _, err = _sysCommand(backup_cmd)
-        if not suc:
-            return False, "Failed to rollback kernel parameters. Procedure, reason:{}".format(err)
-        os.remove(backup_file)
-        return True, "The rollback of kernel parameters succeeded. Procedure"
-
-
 def _sysCommand(cmd: str):
     result = subprocess.run(
         cmd,
@@ -274,3 +248,27 @@ class Sysctl:
         else:
             logger.error("Failed to rollback: {}".format(res))
             return False, res
+
+    def originalConfig(self, action):
+        backup_file = os.path.join(Config.ORIGINAL_CONF, "sysctl.cnf")
+
+        if action == "backup":
+            if os.path.exists(backup_file):
+                return True, "backup file:{} exists, no need to backup again".format(backup_file)
+
+            suc, _, err = _sysCommand("sysctl -a > {}".format(backup_file))
+            if not suc:
+                return False, "Backup parameters failed, reason:{}".format(err)
+
+            return True, "Backup kernel parameters succeeded. Procedure"
+
+        elif action == "rollback":
+            if not os.path.exists(backup_file):
+                return True, "No backup file was found"
+
+            suc, _, err = _sysCommand("sysctl -p {}".format(backup_file))
+            if not suc:
+                return False, "Failed to rollback kernel parameters. Procedure, reason:{}".format(err)
+
+            os.remove(backup_file)
+            return True, "The rollback of kernel parameters succeeded. Procedure"

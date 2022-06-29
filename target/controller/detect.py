@@ -1,12 +1,10 @@
 import json
 
 from tornado.web import RequestHandler
-from target.common.pylog import APILog
 from target.common.system import sysCommand
 
 
 class DetectHandler(RequestHandler):
-    @APILog
     def post(self):
         """ Detect parameters value
         """

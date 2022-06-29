@@ -9,17 +9,14 @@ KeenTune-target running in tunning target environment with four main functions:
     4. rollback: Rollback to parameter configuration defined in backup file.
 
 """
-
 import tornado
-
 from target.common.config import Config
 from target.controller.status import StatusHandler
 from target.controller.backup import BackupHandler
 from target.controller.rollback import RollbackHandler
 from target.controller.configure import ConfigureHandler
 from target.controller.detect import DetectHandler
-from target.controller.initialize import InitializeHandler, backupall
-
+from target.controller.orig_conf import OriginalConfigurationHandler, backupOriginalConfiguration
 
 def main():
     app = tornado.web.Application(handlers=[
@@ -28,14 +25,12 @@ def main():
         (r"/rollback", RollbackHandler),
         (r"/configure", ConfigureHandler),
         (r"/detect", DetectHandler),
-        (r"/initialize", InitializeHandler),
+        (r"/original", OriginalConfigurationHandler),
     ])
-
     app.listen(Config.target_port)
-    backupall()
+    backupOriginalConfiguration()
     print("KeenTune-target running...")
     tornado.ioloop.IOLoop.current().start()
-
 
 if __name__ == "__main__":
     main()

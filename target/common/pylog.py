@@ -60,7 +60,7 @@ def functionLog(func):
         CALL_LEVEL += 1
 
         if CALL_LEVEL == 0:
-            logger.info("{placeholder}[{module}.{func}] << {args} {kw}".format(
+            logger.debug("{placeholder}[{module}.{func}] << {args} {kw}".format(
                         placeholder=PLACEHOLDER*CALL_LEVEL,
                         module=func.__module__,
                         func=func.__qualname__,
@@ -78,7 +78,7 @@ def functionLog(func):
             suc, res = func(*args, **kw)
 
         except Exception as e:
-            logger.critical('[{module}.{func}] {trace}'.format(
+            logger.error('[{module}.{func}] {trace}'.format(
                 module=func.__module__,
                 func=func.__qualname__,
                 trace=traceback.format_exc()))
@@ -88,7 +88,7 @@ def functionLog(func):
         else:
             if suc:
                 if CALL_LEVEL == 0:
-                    logger.info("{placeholder}[{module}.{func}] >> {out}".format(
+                    logger.debug("{placeholder}[{module}.{func}] >> {out}".format(
                         placeholder=PLACEHOLDER*CALL_LEVEL,
                         module=func.__module__,
                         func=func.__qualname__,
@@ -101,7 +101,7 @@ def functionLog(func):
                         out=res))
 
             else:
-                logger.error("{placeholder}[{module}.{func}] {error}".format(
+                logger.warning("{placeholder}[{module}.{func}] {error}".format(
                     placeholder=PLACEHOLDER*CALL_LEVEL,
                     module=func.__module__,
                     func=func.__qualname__,
@@ -125,7 +125,7 @@ def normalFuncLog(func):
         CALL_LEVEL += 1
 
         if CALL_LEVEL == 0:
-            logger.info("{placeholder}[{module}.{func}] << {args} {kw}".format(
+            logger.debug("{placeholder}[{module}.{func}] << {args} {kw}".format(
                 placeholder=PLACEHOLDER*CALL_LEVEL,
                 module=func.__module__,
                 func=func.__qualname__,
@@ -143,7 +143,7 @@ def normalFuncLog(func):
             out = func(*args, **kw)
 
         except Exception:
-            logger.critical('[{module}.{func}] {trace}'.format(
+            logger.error('[{module}.{func}] {trace}'.format(
                 module=func.__module__,
                 func=func.__qualname__,
                 trace=traceback.format_exc()))
@@ -152,7 +152,7 @@ def normalFuncLog(func):
 
         else:
             if CALL_LEVEL == 0:
-                logger.info("{placeholder}[{module}.{func}] >> {out}".format(
+                logger.debug("{placeholder}[{module}.{func}] >> {out}".format(
                     placeholder=PLACEHOLDER*CALL_LEVEL,
                     module=func.__module__,
                     func=func.__qualname__,
@@ -166,36 +166,5 @@ def normalFuncLog(func):
 
             CALL_LEVEL -= 1
             return out
-
-    return wrapper
-
-
-def APILog(func):
-    """ Auto logging decorator for restful api.
-
-    Logging resquest data if api method is POST. 
-    Handling all exception occured in this function, logging traceback.
-
-    """
-    @functools.wraps(func)
-    def wrapper(*args, **kw):
-        obj = args[0]
-        if func.__name__ == "post":
-            input_data = json.loads(obj.request.body)
-            logger.info("{api_name} <== {input}".format(
-                api_name=func.__qualname__,
-                input=input_data))
-
-        else:
-            logger.info("{api_name} <== ".format(
-                api_name=func.__qualname__))
-
-        try:
-            func(*args, **kw)
-
-        except Exception:
-            logger.critical("{api_name} {trace}".format(
-                api_name=func.__qualname__,
-                trace=traceback.format_exc()))
 
     return wrapper
