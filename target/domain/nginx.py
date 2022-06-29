@@ -1,5 +1,4 @@
 import os
-import subprocess
 from pynginxconfig import NginxConfig
 
 from target.common.config import Config
@@ -245,66 +244,55 @@ class Nginx:
 
         return True, "backup nginx successfully!"
 
-def _sysCommand(cmd:str):
-    result = subprocess.run(
-        cmd,
-        shell=True,
-        close_fds=True,
-        stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE
-    )
+    def originalConfig(self, action):
+        """ backup or rollback original configuration
 
-    suc = result.returncode
-    out = result.stdout.decode('UTF-8', 'strict').strip()
-    err = result.stderr.decode('UTF-8', 'strict').strip()
-    return suc, out, err
+        Args:
+            action (str): rollback or backup
 
-@functionLog
-def initialize(action):
-    config_file = "/etc/nginx/nginx.conf"
-    initialize_dir = "/var/keentune/ServiceBackup"
-    backup_file = os.path.join(initialize_dir, "nginx.conf")
-    if action == "backup":
-        suc, out, err = _sysCommand("systemctl status nginx")
-        if suc == 4:
-            return True, "No nginx service is found. No configuration backup is required"
+        Returns:
+            bool: if success.
+            str : operating or error messages.
+        """
+        @functionLog
+        def __backupOriginalConfig():
+            # TODO: risk of missing backup of nginx config if user started keentune-target before nginx service
+            # suc, _ = sysCommand("systemctl status nginx")
+            # if suc == 4:
+            #     return True, "No nginx service is found. No configuration backup is required"
 
-        if os.path.exists(backup_file):
-            if os.path.getsize(backup_file)!=0:
-                return True, "backup file:{} exists, no need to backup again".format(backup_file)
-            else:
+            if os.path.exists(os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1])):
+                return True, "backup file:{} exists, no need to backup again".format(
+                    os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1]))
+
+            if not os.path.exists(config_to_backup):
                 return True, "The application does not require a configuration file"
 
-        if not os.path.exists(config_file):
-            with open(backup_file, "w") as f:
-                return True, "The application does not require a configuration file"
+            return sysCommand("cp -f {} {}".format(config_to_backup, Config.ORIGINAL_CONF))
 
-        try:
-            with open(config_file, "r", encoding="UTF-8") as f:
-                backup_content = f.read()
-            with open(backup_file, "w") as f:
-                f.write(backup_content)
-        except Exception as e:
-            return False, "Backup config failed, reason:{}".format(str(e))
-        return True, "Backup the nginx configuration file succeeded. Procedure"
+        @functionLog
+        def __rollbackOriginalConfig():
+            if not os.path.exists(os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1])):
+                return True, "No backup file was found"
 
-    elif action == "rollback":
-        if not os.path.exists(backup_file):
-            return True, "No backup file was found"
-        if os.path.getsize(backup_file)==0:
-            os.remove(config_file)
-        else:
-            try:
-                with open(backup_file, "r", encoding="UTF-8") as f:
-                    backup_content = f.read()
-                with open(config_file, "w") as f:
-                    f.write(backup_content)
-            except Exception as e:
-                return False, "Rollback nginx config failed, reason:{}".format(str(e))
+            suc, msg = sysCommand("mv -f {} {}".format(
+                os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1]),
+                os.path.split(config_to_backup)[0]
+            ))
+            if not suc:
+                return False, "Failed to mv backup file to {}: {}".format(os.path.split(config_to_backup)[0], msg)
 
-        suc, out, err = _sysCommand("systemctl restart nginx")
-        if suc != 0:
-            return False, err
-        os.remove(backup_file)
-        return True, "The rollback of nginx succeeded. Procedure"
+            suc, msg = sysCommand("systemctl restart nginx")
+            if not suc:
+                return False, "Failed to restart nginx: {}".format(msg)
 
+            return True, ""
+
+        assert action in ['backup', 'rollback']
+        config_to_backup = "/etc/nginx/nginx.conf"
+
+        if action == "backup":
+            return __backupOriginalConfig()
+        
+        elif action == "rollback":
+            return __rollbackOriginalConfig()
