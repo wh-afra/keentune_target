@@ -1,7 +1,7 @@
 import json
 
 from tornado.web import RequestHandler
-from target.domain import DOMAINOBJ, loadDoamin
+from agent.domain import DOMAINOBJ, loadDoamin
 
 
 class BackupHandler(RequestHandler):

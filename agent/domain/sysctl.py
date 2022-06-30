@@ -3,9 +3,9 @@ import re
 import time
 import subprocess
 
-from target.common.config import Config
-from target.common.system import sysCommand
-from target.common.pylog import logger
+from agent.common.config import Config
+from agent.common.system import sysCommand
+from agent.common.pylog import logger
 
 def _sysCommand(cmd: str):
     result = subprocess.run(
@@ -74,7 +74,7 @@ class Sysctl:
     get_cmd = "sysctl -n {name}"
     set_cmd = "sysctl -w {name}='{value}'"
     backup_file = os.path.join(
-        Config.backup_dir, "{}_backup.conf".format(name))
+        Config.BACNUP_PATH, "{}_backup.conf".format(name))
 
     def __init__(self):
         super().__init__()
@@ -114,7 +114,7 @@ class Sysctl:
                 value = param_info['value']) + "\n"
 
         install_file = os.path.join(
-            Config.backup_dir, 
+            Config.BACNUP_PATH, 
             "param_set_{}.sh".format(int(time.time()))
         )
         logger.info("Generating knobs setting script: {}".format(install_file))
@@ -160,7 +160,7 @@ class Sysctl:
         for param_name, param_info in param_list.items():
             suc, param_value = sysCommand(
                 command = self.get_cmd.format(name=param_name.strip()),
-                cwd     = Config.keentune_script_dir)
+                cwd     = Config.KEENTUNE_SCRIPT_PATH)
 
             if suc:
                 result[param_name] = {
@@ -207,7 +207,7 @@ class Sysctl:
         for param_name, _ in param_list.items():
             suc, param_value = sysCommand(
                 command = self.get_cmd.format(name=param_name.strip()),
-                cwd     = Config.keentune_script_dir)
+                cwd     = Config.KEENTUNE_SCRIPT_PATH)
             if not suc:
                 SUCCESS = False
                 Errormsg += param_value + "\n"
@@ -250,7 +250,7 @@ class Sysctl:
             return False, res
 
     def originalConfig(self, action):
-        backup_file = os.path.join(Config.ORIGINAL_CONF, "sysctl.cnf")
+        backup_file = os.path.join(Config.ORIGINAL_CONF_PATH, "sysctl.cnf")
 
         if action == "backup":
             if os.path.exists(backup_file):

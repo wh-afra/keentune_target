@@ -1,5 +1,6 @@
 import subprocess
-from target.common.pylog import functionLog
+
+from agent.common.pylog import functionLog
 
 
 @functionLog

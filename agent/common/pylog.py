@@ -1,46 +1,53 @@
-import json
 import logging
 import functools
+from os import path
 import traceback
 
-from target.common.config import Config
+from agent.common.config import Config
 from logging.handlers import TimedRotatingFileHandler
 
 logger = logging.getLogger(__name__)
 
-logger.setLevel(Config.logfile_level)
+def _initLogger():
+    logger.setLevel(Config.LOGFILE_LEVEL)
 
-# Console Handler
-console_handler = logging.StreamHandler()
-console_handler.setLevel(Config.console_level)
-console_handler.setFormatter(logging.Formatter(
-    "[%(levelname)s] %(asctime)s: %(message)s"))
-logger.addHandler(console_handler)
+    # Console Handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(Config.CONSOLE_LEVEL)
+    console_handler.setFormatter(logging.Formatter(
+        "[%(levelname)s] %(asctime)s: %(message)s"))
 
-# Log file Handler
-file_handler = TimedRotatingFileHandler(
-    Config.logfile_path,
-    when='D',
-    interval=Config.logfile_interval,
-    backupCount=Config.logfile_backup_count
-)
-file_handler.setLevel(Config.logfile_level)
-file_handler.setFormatter(logging.Formatter(
-    "[%(levelname)s] %(asctime)s: %(message)s"))
-logger.addHandler(file_handler)
+    # Log file Handler
+    file_handler = TimedRotatingFileHandler(
+        filename    = Config.LOGFILE_PATH,
+        when        = 'D',
+        interval    = Config.LOGFILE_INTERVAL,
+        backupCount = Config.LOGFILE_BACKUP_COUNT
+    )
+    file_handler.setLevel(Config.LOGFILE_LEVEL)
+    file_handler.setFormatter(logging.Formatter(
+        "[%(levelname)s] %(asctime)s: %(message)s"))
 
-# Error log file Handler
-error_handler = TimedRotatingFileHandler(
-    Config.logfile_path + '.error',
-    when='D',
-    interval=Config.logfile_interval,
-    backupCount=Config.logfile_backup_count
-)
-error_handler.setLevel(logging.ERROR)
-error_handler.setFormatter(logging.Formatter(
-    "[%(levelname)s] %(asctime)s: %(message)s"))
-logger.addHandler(error_handler)
+    # Error log file Handler
+    error_handler = TimedRotatingFileHandler(
+        filename    = Config.LOGFILE_PATH + '.error',
+        when        = 'D',
+        interval    = Config.LOGFILE_INTERVAL,
+        backupCount = Config.LOGFILE_BACKUP_COUNT
+    )
+    error_handler.setLevel(logging.ERROR)
+    error_handler.setFormatter(logging.Formatter(
+        "[%(levelname)s] %(asctime)s: %(message)s"))
+    
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+    logger.addHandler(error_handler)
 
+try:
+    _initLogger()
+except PermissionError:
+    print("[PERMISSION ERROR] NO Permissions to init Log File!")
+    exit(0)
 
 CALL_LEVEL = -1
 PLACEHOLDER = " " * 4

@@ -1,8 +1,8 @@
 import os
 import re
 
-from target.common.config import Config
-from target.common.pylog import functionLog
+from agent.common.config import Config
+from agent.common.pylog import functionLog
 
 
 class Iperf:
@@ -30,7 +30,7 @@ class Iperf:
                 "msg": ""
             }
 
-        path = os.path.join(Config.keentune_workspace, "files", "benchmark/iperf/iperf.py")
+        path = os.path.join(Config.KEENTUNE_WORKSPACE, "files", "benchmark/iperf/iperf.py")
         with open(path, "r", encoding='UTF-8') as f:
             data = f.read()
             data = re.sub(r"PARALLEL_DATA = \d+", "PARALLEL_DATA = {}".format(param_list["Parallel"]["value"]), data)

@@ -10,13 +10,13 @@ KeenTune-target running in tunning target environment with four main functions:
 
 """
 import tornado
-from target.common.config import Config
-from target.controller.status import StatusHandler
-from target.controller.backup import BackupHandler
-from target.controller.rollback import RollbackHandler
-from target.controller.configure import ConfigureHandler
-from target.controller.detect import DetectHandler
-from target.controller.orig_conf import OriginalConfigurationHandler, backupOriginalConfiguration
+from agent.common.config import Config
+from agent.controller.status import StatusHandler, AvaliableDomainHandler
+from agent.controller.backup import BackupHandler
+from agent.controller.rollback import RollbackHandler
+from agent.controller.configure import ConfigureHandler
+from agent.controller.detect import DetectHandler
+from agent.controller.orig_conf import OriginalConfigurationHandler, backupOriginalConfiguration
 
 def main():
     app = tornado.web.Application(handlers=[
@@ -26,11 +26,13 @@ def main():
         (r"/configure", ConfigureHandler),
         (r"/detect", DetectHandler),
         (r"/original", OriginalConfigurationHandler),
+        (r"/avaliable", AvaliableDomainHandler),
     ])
-    app.listen(Config.target_port)
+    app.listen(Config.AGENT_PORT)
     backupOriginalConfiguration()
     print("KeenTune-target running...")
     tornado.ioloop.IOLoop.current().start()
+
 
 if __name__ == "__main__":
     main()

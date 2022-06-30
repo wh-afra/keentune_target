@@ -1,8 +1,8 @@
 import os
 from importlib import import_module
 
-from target import domain
-from target.common import pylog
+from agent import domain
+from agent.common import pylog
 
 DOMAINOBJ = {}
 
@@ -12,7 +12,7 @@ def loadDoamin(domain_name):
         return
     
     try:
-        module = import_module('target.domain.{}'.format(domain_name))
+        module = import_module('agent.domain.{}'.format(domain_name))
         domain_obj = eval('domain.{domain_name}.{class_name}()'.format(
             domain_name = domain_name,
             class_name = "".join([value.capitalize() for value in domain_name.split("_")]) if "_" in domain_name else domain_name.capitalize()
@@ -28,7 +28,7 @@ def loadDoamin(domain_name):
 
 
 def loadSupportedDoamin():
-    """ try to load all avaliable domain in folder /target/domain
+    """ try to load all avaliable domain in folder /agent/domain
 
     """
     domain_list = [i.split(".")[0] for i in os.listdir(os.path.split(os.path.abspath(__file__))[0]) 

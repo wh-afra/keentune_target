@@ -2,9 +2,9 @@ import os
 import json
 from tornado.web import RequestHandler
 
-from target.domain import DOMAINOBJ, loadSupportedDoamin
-from target.common import pylog
-from target.common.config import Config
+from agent.domain import DOMAINOBJ, loadSupportedDoamin
+from agent.common import pylog
+from agent.common.config import Config
 
 class OriginalConfigurationHandler(RequestHandler):
     def post(self):
@@ -15,8 +15,8 @@ class OriginalConfigurationHandler(RequestHandler):
 
 def backupOriginalConfiguration():
     loadSupportedDoamin()
-    if not os.path.exists(Config.ORIGINAL_CONF):
-        os.mkdir(Config.ORIGINAL_CONF)
+    if not os.path.exists(Config.ORIGINAL_CONF_PATH):
+        os.mkdir(Config.ORIGINAL_CONF_PATH)
     
     for domain_name in DOMAINOBJ.keys():
         try:

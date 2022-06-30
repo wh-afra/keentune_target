@@ -1,9 +1,9 @@
 import os
 from pynginxconfig import NginxConfig
 
-from target.common.config import Config
-from target.common.system import sysCommand
-from target.common.pylog import functionLog
+from agent.common.config import Config
+from agent.common.system import sysCommand
+from agent.common.pylog import functionLog
 
 
 class Nginx:
@@ -14,7 +14,7 @@ class Nginx:
         2. start nginx service.
         """
         self.nginx_config_path = "/etc/nginx/nginx.conf"
-        self.backup_file = os.path.join(Config.backup_dir, "nginx_backup.conf")
+        self.backup_file = os.path.join(Config.BACNUP_PATH, "nginx_backup.conf")
 
         self.nginx_conf = NginxConfig()
         suc, msg = self._restart()
@@ -261,22 +261,22 @@ class Nginx:
             # if suc == 4:
             #     return True, "No nginx service is found. No configuration backup is required"
 
-            if os.path.exists(os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1])):
+            if os.path.exists(os.path.join(Config.ORIGINAL_CONF_PATH, os.path.split(config_to_backup)[1])):
                 return True, "backup file:{} exists, no need to backup again".format(
-                    os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1]))
+                    os.path.join(Config.ORIGINAL_CONF_PATH, os.path.split(config_to_backup)[1]))
 
             if not os.path.exists(config_to_backup):
                 return True, "The application does not require a configuration file"
 
-            return sysCommand("cp -f {} {}".format(config_to_backup, Config.ORIGINAL_CONF))
+            return sysCommand("cp -f {} {}".format(config_to_backup, Config.ORIGINAL_CONF_PATH))
 
         @functionLog
         def __rollbackOriginalConfig():
-            if not os.path.exists(os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1])):
+            if not os.path.exists(os.path.join(Config.ORIGINAL_CONF_PATH, os.path.split(config_to_backup)[1])):
                 return True, "No backup file was found"
 
             suc, msg = sysCommand("mv -f {} {}".format(
-                os.path.join(Config.ORIGINAL_CONF, os.path.split(config_to_backup)[1]),
+                os.path.join(Config.ORIGINAL_CONF_PATH, os.path.split(config_to_backup)[1]),
                 os.path.split(config_to_backup)[0]
             ))
             if not suc:

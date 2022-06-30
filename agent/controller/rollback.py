@@ -1,7 +1,7 @@
 import json
 
 from tornado.web import RequestHandler
-from target.domain import DOMAINOBJ
+from agent.domain import DOMAINOBJ
 
 
 class RollbackHandler(RequestHandler):

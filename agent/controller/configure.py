@@ -2,8 +2,8 @@ import json
 import traceback
 
 from tornado.web import RequestHandler
-from target.domain import DOMAINOBJ, loadDoamin
-from target.common import pylog
+from agent.domain import DOMAINOBJ, loadDoamin
+from agent.common import pylog
 
 from tornado.httpclient import HTTPClient, HTTPRequest, HTTPError
 from tornado.concurrent import run_on_executor

@@ -1,7 +1,7 @@
 import json
 
 from tornado.web import RequestHandler
-from target.common.system import sysCommand
+from agent.common.system import sysCommand
 
 
 class DetectHandler(RequestHandler):

@@ -9,7 +9,7 @@ setup(
     url         = "https://gitee.com/anolis/keentune_target",
     license     = "MulanPSLv2",
     packages    = find_packages(),
-    package_data= {'target': ['target.conf']},
+    package_data= {'agent': ['target.conf']},
 
     python_requires  = '>=3.6',
     long_description = long_description,
@@ -26,10 +26,10 @@ setup(
     ],
     data_files  = [
         ("/etc/keentune/target", ["LICENSE"]),
-        ("/etc/keentune/conf", ["target/target.conf"]),
+        ("/etc/keentune/conf", ["agent/target.conf"]),
     ],
 
     entry_points = {
-        'console_scripts': ['keentune-target=target.target:main']
+        'console_scripts': ['keentune-target=agent.agent:main']
     }
 )
