@@ -11,7 +11,7 @@ KeenTune-target running in tunning target environment with four main functions:
 """
 import tornado
 from agent.common.config import Config
-from agent.controller.status import StatusHandler
+from agent.controller.status import StatusHandler, AvaliableDomainHandler
 from agent.controller.backup import BackupHandler
 from agent.controller.rollback import RollbackHandler
 from agent.controller.configure import ConfigureHandler
@@ -26,6 +26,7 @@ def main():
         (r"/configure", ConfigureHandler),
         (r"/detect", DetectHandler),
         (r"/original", OriginalConfigurationHandler),
+        (r"/avaliable", AvaliableDomainHandler),
     ])
     app.listen(Config.AGENT_PORT)
     backupOriginalConfiguration()
