@@ -1,7 +1,7 @@
 import logging
 import functools
-from os import path
 import traceback
+import os
 
 from agent.common.config import Config
 from logging.handlers import TimedRotatingFileHandler
@@ -47,7 +47,7 @@ try:
     _initLogger()
 except PermissionError:
     print("[PERMISSION ERROR] NO Permissions to init Log File!")
-    exit(0)
+    os._exit(0)
 
 CALL_LEVEL = -1
 PLACEHOLDER = " " * 4
