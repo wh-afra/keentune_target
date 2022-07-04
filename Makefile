@@ -32,7 +32,7 @@ clean:
 	rm -rf keentune-target-$(VERSION).tar.gz
 
 install: 
-	@echo "Start installing KeenTune-target"
+	@echo "+ Start installing KeenTune-target"
 	mkdir -p $(SYSCONFDIR)
 	mkdir -p $(SYSTEMDDIR)
 	install -p -D -m 0644 agent/target.conf $(SYSCONFDIR)
@@ -41,7 +41,7 @@ install:
 	mkdir -p $(LOCALBINDIR)
 	cp $(OUTPATH)/* $(BINDIR)
 	cp $(OUTPATH)/* $(LOCALBINDIR)
-	@echo "Make install Done."
+	@echo "+ Make install Done."
 
 startup:
 	systemctl daemon-reload
@@ -60,3 +60,4 @@ tar:
 	rm -rf keentune-target-$(VERSION)
 
 run: all install startup
+rpm: target tar
