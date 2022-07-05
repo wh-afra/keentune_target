@@ -46,7 +46,6 @@ install:
 startup:
 	systemctl daemon-reload
 	systemctl restart keentune-target
-	systemctl restart keentune-target
 
 tar:
 	mkdir -p keentune-target-$(VERSION)

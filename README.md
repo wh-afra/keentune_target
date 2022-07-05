@@ -6,7 +6,7 @@ KeenTune-target is the optimization setting component, which is the only compone
 
 ## Build & Install
 ### By setuptools
-Setuptools can build target as a python lib. We can run setuptools as  
+Setuptools can build KeenTune-target as a python lib. We can run setuptools as  
 ```s
 >> python3 setup.py install
 ```
@@ -44,7 +44,3 @@ or depoly KeenTune-target by systemctl
 ```s
 >> systemctl start keentune-target
 ```
-
-## Build a rpm
-### By setuptools
-### By pyInstaller
