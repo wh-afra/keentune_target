@@ -15,26 +15,26 @@
 keentune-target.domain - keentune-target domain file
 
 .SH DESCRIPTION
-This man page documents format of the keentune-target domain file. Domain file mainly includes setparamall, getparamall, backup and rollback functions. Is the parameter domain definition and implementation. Corresponding to the files in the /etc/keentune/parameter directory of the keentuned.
+This man page documents the format of the keentune-target domain file. The domain file mainly includes setparamall, getparamall, backup, and rollback functions. It contains the parameter domain definition and implementation, corresponding to the files in the /etc/keentune/parameter directory of keentuned.
 
 .SH DOMAIN
-At the moment we're providing the following pre-defined domain:
+At the moment we provide the following pre-defined domain:
 
 .TP
 .BI "iperf.py"
-For the iperf3 network performance tool tuning. The test environment requires both an iperf server and a client.
+For iperf3 tuning task. The test environment requires both an iperf server and a client.
 .TP
 .BI "nginx.py"
-For nginx tuning. The test environment requires a nginx installation and starting the service.
+For nginx tuning task. The test environment requires installing nginx and starting the service.
 .TP
 .BI "sysctl.py"
-Tuning for equipment system information.
+For tuning for operating system configuraions.
 .TP
 .BI "sysbench.py"
-In the current tuning instance, it is the performance test and optimization of the mysql database.
+For tuning the performance of MySQL database.
 .TP
 .BI " fio.py"
-Test IOPS and optimize hard disk data processing. Install fio before tuning test.
+For tuning hard disk data processing with the metric of IOPS. The test environment requires installing fio.
 
 .SH FILES
 .nf
