@@ -1,6 +1,5 @@
 import os
 import logging
-import sys
 
 from configparser import ConfigParser
 
@@ -10,10 +9,6 @@ LOGLEVEL = {
     "WARNING"   : logging.WARNING,
     "ERROR"     : logging.ERROR
 }
-
-if os.geteuid() != 0:
-    print("Superuser permissions are required to run the daemon.", file=sys.stderr)
-    sys.exit(1)
 
 class Config:
     conf_file_path = "/etc/keentune/conf/target.conf"

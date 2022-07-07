@@ -1,10 +1,10 @@
-import os
 from importlib import import_module
 
 from agent import domain
 from agent.common import pylog
 
 DOMAINOBJ = {}
+ALL_DOMAIN_LIST = ['sysctl', 'nginx', 'iperf', 'sysbench']
 
 def loadDoamin(domain_name):
     global DOMAINOBJ
@@ -31,14 +31,7 @@ def loadSupportedDoamin():
     """ try to load all avaliable domain in folder /agent/domain
 
     """
-    domain_list = [i.split(".")[0] for i in os.listdir(os.path.split(os.path.abspath(__file__))[0]) 
-        if i != os.path.split(os.path.abspath(__file__))[1] and not os.path.isdir(os.path.join(os.path.split(os.path.abspath(__file__))[0], i))]
-
-    pylog.logger.info("Parseing and trying to load domains defined in {}".format(
-        os.path.split(os.path.abspath(__file__))[0]
-    ))
-
-    for domain_name in domain_list:
+    for domain_name in ALL_DOMAIN_LIST:
         try:
             loadDoamin(domain_name)
         except Exception as e:

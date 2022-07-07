@@ -10,6 +10,7 @@ KeenTune-target running in tunning target environment with four main functions:
 
 """
 import tornado
+import os
 from agent.common.config import Config
 from agent.controller.status import StatusHandler, AvaliableDomainHandler
 from agent.controller.backup import BackupHandler
@@ -35,4 +36,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        os._exit(0)
