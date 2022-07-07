@@ -2,9 +2,15 @@ import logging
 import functools
 from os import path
 import traceback
+import os
+import sys
 
 from agent.common.config import Config
 from logging.handlers import TimedRotatingFileHandler
+
+if os.geteuid() != 0:
+    print("Superuser permissions are required to run the daemon.", file=sys.stderr)
+    sys.exit(1)
 
 logger = logging.getLogger(__name__)
 
