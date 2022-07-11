@@ -8,31 +8,28 @@ KeenTune-target is the optimization setting component, which is the only compone
 ### By setuptools
 Setuptools can build KeenTune-target as a python lib. We can run setuptools as  
 ```s
+>> pip3 install setuptools
 >> python3 setup.py install
-```
-
-### By pyInstaller
-pyInstaller can build KeenTune-target as a binary file. We can run pyInstaller as  
-```s
->> make
->> make install
+>> pip3 install -r requirements.txt
 ```
 
 ### Configuration
 After install KeenTune-target by setuptools or pyInstaller, we can find configuration file in **/etc/keentune/conf/target.conf**
 ```conf
 [agent]
-KEENTUNE_HOME = /etc/keentune/                  # KeenTune-target install path.
-KEENTUNE_WORKSPACE = /var/keentune/             # KeenTune-target user file workspace.
-ORIGINAL_CONF = /var/keentune/OriginalBackup    # Original Configuration backup path.
-AGENT_PORT = 9873                               # KeenTune-target listening port.
+# Basic Configuration
+KeenTune_HOME       = /etc/keentune/                ; KeenTune-target install path.
+KeenTune_WORKSPACE  = /var/keentune/                ; KeenTune-target workspace.
+AGENT_PORT          = 9873                          ; KeenTune-target service port
+ORIGINAL_CONF       = /var/keentune/OriginalBackup  ; Original configuration backup path.
 
 [log]
-CONSOLE_LEVEL = ERROR                           # Log level of console.
-LOGFILE_LEVEL = DEBUG                           # Log level of logfile.
-LOGFILE_PATH  = /var/log/keentune/target.log    # Logfile saving path.
-LOGFILE_INTERVAL = 1                            
-LOGFILE_BACKUP_COUNT = 14
+# Configuration about log
+LOGFILE_PATH        = /var/log/keentune/target.log  ; Log file of target
+CONSOLE_LEVEL       = INFO                          ; Console Log level
+LOGFILE_LEVEL       = DEBUG                         ; File saved log level
+LOGFILE_INTERVAL    = 1                             ; The interval of log file replacing
+LOGFILE_BACKUP_COUNT= 14                            ; The count of backup log file  
 ```
 
 ### Run
@@ -43,4 +40,34 @@ After modify KeenTune-target configuration file, we can deploy KeenTune-target a
 or depoly KeenTune-target by systemctl  
 ```s
 >> systemctl start keentune-target
+```
+**NOTE**: You need copy the file 'keentune-target.service' to '/usr/lib/systemd/system' manually, if you installed the keentune-target by 'setuptools' rather then 'yum install'.
+
+### Code Structure
+```
+agent/
+├── agent.py            # Entrance of keentune-target
+├── common              # Common module, includes log, config and tools.
+│   ├── config.py
+│   ├── __init__.py
+│   ├── pylog.py
+│   └── system.py
+├── controller          # Service response module.
+│   ├── backup.py
+│   ├── configure.py
+│   ├── detect.py
+│   ├── __init__.py
+│   ├── orig_conf.py
+│   ├── rollback.py
+│   └── status.py
+├── domain              # knobs domain
+│   ├── __init__.py
+│   ├── iperf.py
+│   ├── nginx.py
+│   ├── sysbench.py
+│   └── sysctl.py
+├── __init__.py
+└── target.conf          # Configuration file
+
+3 directories, 19 files
 ```
