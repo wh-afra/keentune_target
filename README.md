@@ -5,7 +5,6 @@
 KeenTune-target is the optimization setting component, which is the only component of KeenTune that needs to be deployed in business environments. It is used to set optimized settings in dynamic and static tuning workflows, with operations such as parameter set, get, backup, and rollback.
 
 ### Build & Install
-### By setuptools
 Setuptools can build KeenTune-target as a python lib. We can run setuptools as  
 ```s
 >> pip3 install setuptools
