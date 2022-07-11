@@ -1,10 +1,10 @@
 # KeenTune Target  
-
-## Introduction
 ---  
+
+### Introduction
 KeenTune-target is the optimization setting component, which is the only component of KeenTune that needs to be deployed in business environments. It is used to set optimized settings in dynamic and static tuning workflows, with operations such as parameter set, get, backup, and rollback.
 
-## Build & Install
+### Build & Install
 ### By setuptools
 Setuptools can build KeenTune-target as a python lib. We can run setuptools as  
 ```s
@@ -41,8 +41,9 @@ or depoly KeenTune-target by systemctl
 ```s
 >> systemctl start keentune-target
 ```
-**NOTE**: You need copy the file 'keentune-target.service' to '/usr/lib/systemd/system' manually, if you installed the keentune-target by 'setuptools' rather then 'yum install'.
+**NOTE**: You need copy the file 'keentune-target.service' to '/usr/lib/systemd/system' manually, if you installed the keentune-target by 'setuptools' rather then 'yum install'.  
 
+---   
 ### Code Structure
 ```
 agent/
