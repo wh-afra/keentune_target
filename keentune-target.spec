@@ -39,7 +39,7 @@ systemctl daemon-reload
 %files -f INSTALLED_FILES
 %defattr(-,root,root)
 %license LICENSE
-%{_libdir}/systemd/system/keentune-target.service
+%{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
 * Mon Jun 20 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.2.1-1

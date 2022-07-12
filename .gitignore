@@ -1,4 +1,6 @@
 build/
 dist/
+bin/
 keentune_target.egg-info/
 **/__pycache__/
+.vscode/
