@@ -1,7 +1,7 @@
 %define anolis_release 1
 
 Name:           keentune-target
-Version:        1.2.1
+Version:        1.3.0
 Release:        %{?anolis_release}%{?dist}
 Url:            https://gitee.com/anolis/keentune_target
 Summary:        Parameters setting, reading and backup models for KeenTune
@@ -42,6 +42,11 @@ systemctl daemon-reload
 %{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
+* Thu Jun 30 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.3.0
+- rename target to agent
+- add RESTful API /available
+- refactor original configuration backup
+
 * Mon Jun 20 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.2.1-1
 - update docs
 - fix bug: tuning stoped because of serival knobs setting failed.
