@@ -1,4 +1,4 @@
-%define anolis_release 1
+%define anolis_release 0
 
 Name:           keentune-target
 Version:        1.3.0
@@ -42,7 +42,7 @@ systemctl daemon-reload
 %{_prefix}/lib/systemd/system/keentune-target.service
 
 %changelog
-* Thu Jun 30 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.3.0
+* Thu Jun 30 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.3.0-0
 - rename target to agent
 - add RESTful API /available
 - refactor original configuration backup
