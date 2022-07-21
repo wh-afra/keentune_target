@@ -1,4 +1,4 @@
-%define anolis_release 0
+%define anolis_release 1
 
 Name:           keentune-target
 Version:        1.3.0
@@ -29,6 +29,9 @@ Parameters setting, reading and backup models for KeenTune
 %{__python3} setup.py install --single-version-externally-managed -O1 --prefix=%{_prefix} --root=%{buildroot} --record=INSTALLED_FILES
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib/systemd/system/
 cp -f ./keentune-target.service ${RPM_BUILD_ROOT}/usr/lib/systemd/system/
+install -D -m 0644 man/keentune-target.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/keentune-target.8
+install -D -m 0644 man/keentune-target.conf.5 ${RPM_BUILD_ROOT}%{_mandir}/man5/keentune-target.conf.5
+install -D -m 0644 man/keentune-target.domain.7 ${RPM_BUILD_ROOT}%{_mandir}/man7/keentune-target.domain.7
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -40,8 +43,14 @@ systemctl daemon-reload
 %defattr(-,root,root)
 %license LICENSE
 %{_prefix}/lib/systemd/system/keentune-target.service
+%{_mandir}/man8/keentune-target.8
+%{_mandir}/man5/keentune-target.conf.5
+%{_mandir}/man7/keentune-target.domain.7
 
 %changelog
+* Thu Jul 21 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.3.0-1
+- fix: missing of man dir  
+
 * Thu Jun 30 2022 Runzhe Wang <runzhe.wrz@alibaba-inc.com> - 1.3.0-0
 - rename target to agent
 - add RESTful API /available
