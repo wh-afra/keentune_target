@@ -51,22 +51,30 @@ def getActiveNetCard():
     netcard_list_receive.append(['virtio2', 0])
 
     for dev_name, _ in netcard_list_receive:
-        suc, pci_number = sysCommand("ethtool -i {}".format(dev_name))
+        suc, _pci_number = sysCommand("ethtool -i {}".format(dev_name))
         if not suc:
             continue
-        bus_info = re.search(r"bus-info: (.*)\n", pci_number).group(1)
+        bus_info = re.search(r"bus-info: (.*)\n", _pci_number).group(1)
         if bus_info == '':
             continue
-        suc, interrupts_info = sysCommand(
+
+        suc, _interrupts_info = sysCommand(
             "cat /proc/interrupts | grep {dev_name}".format(dev_name = dev_name))
         if not suc:
             continue
-    
-        network_queue = [
+        interrupts_queue = [
             [j for j in re.split(r"[: ]",i) if j != ""][0] 
-            for i in interrupts_info.split('\n')
+            for i in _interrupts_info.split('\n')
         ]
-        return dev_name, bus_info, network_queue
+
+        suc, queue_info = sysCommand(
+            "ls /sys/class/net/{dev_name}/queues/".format(dev_name = dev_name))
+        if not suc:
+            continue
+        rx_queue, tx_queue = re.findall(r"rx-\d",queue_info), re.findall(r"tx-\d",queue_info)
+
+        return dev_name, bus_info, interrupts_queue, rx_queue, tx_queue
+
     return
 
 
@@ -87,10 +95,24 @@ def getNUMA(bus_info):
     return numa_node_core_range
 
 
+def getCPUInfo():
+    _, cpu_num   = sysCommand("cat /proc/cpuinfo| grep 'physical id'| sort| uniq| wc -l")
+    _, processor = sysCommand("cat /proc/cpuinfo| grep 'processor'| wc -l")
+    return int(cpu_num), int(processor)
+
+
 if __name__ == "__main__":
-    dev_name, bus_info, network_queue= getActiveNetCard()
+    dev_name, bus_info, interrupts_queue, rx_queue, tx_queue = getActiveNetCard()
     print("dev_name:", dev_name)
     print("bus_info:", bus_info)
-    print("network_queue:", network_queue)
+    print("interrupts_queue:", interrupts_queue)
+    print("rx_queue:", rx_queue)
+    print("tx_queue:", tx_queue)
+
     numa_node_core_range = getNUMA(bus_info)
     print("numa_node_core_range: ", numa_node_core_range)
+
+    cpu_num, cpu_core, processor = getCPUInfo()
+    print("cpu_num:", cpu_num)
+    print("cpu_core:", cpu_core)
+    print("processor:", processor)

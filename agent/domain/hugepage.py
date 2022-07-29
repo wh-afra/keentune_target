@@ -1,0 +1,2 @@
+class Hugepage:
+    pass

@@ -4,7 +4,7 @@ from agent import domain
 from agent.common import pylog
 
 DOMAINOBJ = {}
-ALL_DOMAIN_LIST = ['sysctl', 'nginx', 'iperf', 'sysbench']
+ALL_DOMAIN_LIST = ['sysctl', 'nginx', 'iperf', 'sysbench','net']
 
 def loadDoamin(domain_name):
     global DOMAINOBJ
