@@ -47,9 +47,6 @@ def getActiveNetCard():
         key=lambda x:x[1]
     )
 
-    # 'virtio2' is the network card name in virt env
-    netcard_list_receive.append(['virtio2', 0])
-
     for dev_name, _ in netcard_list_receive:
         suc, _pci_number = sysCommand("ethtool -i {}".format(dev_name))
         if not suc:
@@ -57,11 +54,16 @@ def getActiveNetCard():
         bus_info = re.search(r"bus-info: (.*)\n", _pci_number).group(1)
         if bus_info == '':
             continue
-
+        
         suc, _interrupts_info = sysCommand(
             "cat /proc/interrupts | grep {dev_name}".format(dev_name = dev_name))
-        if not suc:
+        if not suc or _interrupts_info == "":
+            # 'virtio2' is the network card name in virt env
+            suc, _interrupts_info = sysCommand(
+                "cat /proc/interrupts | grep {dev_name}".format(dev_name = "virtio2"))
+        if not suc or _interrupts_info == "":
             continue
+    
         interrupts_queue = [
             [j for j in re.split(r"[: ]",i) if j != ""][0] 
             for i in _interrupts_info.split('\n')
@@ -82,15 +84,22 @@ def getNUMA(bus_info):
     suc, numa_message = sysCommand("lspci -vvvs {bus_info}".format(bus_info = bus_info))
     if not suc:
         return 
-    numa_node_num = re.search(r"NUMA node: (\d)\n", numa_message).group(1)
-    if numa_node_num == '':
-        return
+    
+    if re.search(r"NUMA node: (\d)\n", numa_message):
+        numa_node_num = re.search(r"NUMA node: (\d)\n", numa_message).group(1)
+    else:
+        numa_node_num = 0
+    
     _, cpu_message = sysCommand("lscpu")
     if re.search(r"NUMA node{} CPU\(s\):\s*(\d+-\d+)".format(numa_node_num),cpu_message):
         numa_node_core_range = re.search(
             r"NUMA node{} CPU\(s\):\s*(\d+-\d+)".format(numa_node_num),cpu_message).group(1).split('-')
+    elif re.search(r"NUMA 节点{} CPU：\s*(\d+-\d+)".format(numa_node_num),cpu_message):
+        numa_node_core_range = re.search(
+            r"NUMA 节点{} CPU：\s*(\d+-\d+)".format(numa_node_num),cpu_message).group(1).split('-')
     else:
         return
+    
     numa_node_core_range = [int(i) for i in numa_node_core_range]
     return numa_node_core_range
 
@@ -112,7 +121,6 @@ if __name__ == "__main__":
     numa_node_core_range = getNUMA(bus_info)
     print("numa_node_core_range: ", numa_node_core_range)
 
-    cpu_num, cpu_core, processor = getCPUInfo()
+    cpu_num, processor = getCPUInfo()
     print("cpu_num:", cpu_num)
-    print("cpu_core:", cpu_core)
     print("processor:", processor)
