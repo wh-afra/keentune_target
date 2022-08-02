@@ -1,4 +1,5 @@
 import os
+import time
 
 from agent.common.config import Config
 from agent.common.system import sysCommand
@@ -56,6 +57,37 @@ class Hugepage:
                 "msg"   : "This domain is not supported to parameter value reading."
             }
         return True, result
+
+    def rollback(self):
+        if not os.path.exists(self.backup_file):
+            return True, "Can not find backup file:{}".format(self.backup_file)
+
+        with open(self.backup_file, 'r') as f:
+            value = f.read().strip("\n")
+
+        suc, res = self._code_hugepage_set(value)
+        if suc:
+            backup_time = time.asctime(time.localtime(os.path.getctime(self.backup_file)))
+            logger.info("Rollback to backup time: {}".format(backup_time))
+            os.remove(self.backup_file)
+            return True, backup_time
+        else:
+            logger.error("Failed to rollback: {}".format(res))
+            return False, res
+
+    def backup(self, param_list: dict):
+        if os.path.exists(self.backup_file):
+            suc, res = self.rollback()
+            if not suc:
+                return False, res
+
+        suc, res = sysCommand(HUGEPAGE_GET)
+        if suc:
+            with open(self.backup_file, 'w') as f:
+                f.write(res)
+            return True, self.backup_file
+        if not suc:
+            return False, "backup hugepage conf failed: {}".format(res)
 
 
 if __name__ == "__main__":
