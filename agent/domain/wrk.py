@@ -2,8 +2,8 @@ import json
 import os
 import re
 
-from target.common.config import Config
-from target.common.pylog import functionLog
+from agent.common.config import Config
+from agent.common.pylog import functionLog
 
 
 class Wrk:
@@ -31,7 +31,7 @@ class Wrk:
             "msg": ""
         }
 
-        path = os.path.join(Config.keentune_workspace, "files", "benchmark/wrk/wrk_parameter_tuning.py")
+        path = os.path.join(Config.FILES_PATH, "benchmark/wrk/wrk_parameter_tuning.py")
         with open(path, "r", encoding='UTF-8') as f:
             data = f.read()
             data = re.sub(r'DEFAULT = "[a-zA-Z0-9\-=\s]*"', 'DEFAULT = "{}"'.format(command), data)

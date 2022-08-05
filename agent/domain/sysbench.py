@@ -30,7 +30,7 @@ class Sysbench:
             "msg": ""
         }
 
-        path = os.path.join(Config.KEENTUNE_WORKSPACE, "files", "benchmark/sysbench/sysbench_mysql_read_write.py")
+        path = os.path.join(Config.FILES_PATH, "benchmark/sysbench/sysbench_mysql_read_write.py")
         with open(path, "r", encoding='UTF-8') as f:
             data = f.read()
             data = re.sub(r'DEFAULT = "[a-zA-Z0-9\-=\s]*"', 'DEFAULT = "{}"'.format(command), data)
