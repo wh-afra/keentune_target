@@ -24,8 +24,9 @@ class Config:
     print("KeenTune Workspace: {}".format(KEENTUNE_WORKSPACE))
     print("Listening port: {}".format(AGENT_PORT))
 
+    FILES_PATH           = os.path.join(KEENTUNE_WORKSPACE, "bench-files")
     KEENTUNE_SCRIPT_PATH = os.path.join(KEENTUNE_HOME, 'script')
-    BACNUP_PATH         = os.path.join(KEENTUNE_WORKSPACE, "backup")
+    BACNUP_PATH          = os.path.join(KEENTUNE_WORKSPACE, "backup")
 
     for _path in [
         KEENTUNE_WORKSPACE, KEENTUNE_SCRIPT_PATH, BACNUP_PATH, ORIGINAL_CONF_PATH]:

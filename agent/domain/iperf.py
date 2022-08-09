@@ -30,7 +30,7 @@ class Iperf:
                 "msg": ""
             }
 
-        path = os.path.join(Config.KEENTUNE_WORKSPACE, "files", "benchmark/iperf/iperf.py")
+        path = os.path.join(Config.FILES_PATH, "benchmark/iperf/iperf.py")
         with open(path, "r", encoding='UTF-8') as f:
             data = f.read()
             data = re.sub(r"PARALLEL_DATA = \d+", "PARALLEL_DATA = {}".format(param_list["Parallel"]["value"]), data)
